@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NamoreirosFinance.Domain.Core.Entities.Transaction;
-using NamoreirosFinance.Infrastructure.Configurations;
 
 namespace NamoreirosFinance.Infrastructure.Context;
 
