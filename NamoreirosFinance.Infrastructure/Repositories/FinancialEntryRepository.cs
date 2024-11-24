@@ -15,6 +15,7 @@ namespace NamoreirosFinance.Infrastructure.Repositories
         public async Task Add(FinancialEntry entry)
         {
             await _context.FinancialEntries.AddAsync(entry);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<FinancialEntry>> GetAll()
