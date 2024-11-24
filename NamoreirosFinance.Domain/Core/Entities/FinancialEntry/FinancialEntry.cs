@@ -1,7 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
+﻿using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
 using NamoreirosFinance.Domain.Core.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NamoreirosFinance.Domain.Core.Entities.Transaction
 {
