@@ -15,9 +15,8 @@ public abstract class BaseTest : IAsyncLifetime
     {
         _dbName = $"test_db_{Guid.NewGuid():N}";
 
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseNpgsql($"Host={HOST};Database={_dbName};Username={USER};Password={PASSWORD}")
-            .Options;
+        var options = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql($"Host={HOST};Database={_dbName};Username={USER};Password={PASSWORD}") //TODO: create a function to get the connection string
+                                                                 .Options;
 
         _context = new AppDbContext(options);
     }
@@ -30,12 +29,13 @@ public abstract class BaseTest : IAsyncLifetime
 
     private async Task CreateTestDatabase()
     {
-        using var conn = new NpgsqlConnection($"Host={HOST};Database=postgres;Username={USER};Password={PASSWORD}");
+        using var conn = new NpgsqlConnection($"Host={HOST};Database=postgres;Username={USER};Password={PASSWORD}"); //TODO: create a function to get the connection string
         await conn.OpenAsync();
 
         using var cmdKillConnections = new NpgsqlCommand(
-            $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{_dbName}'",
-            conn);
+                                           $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{_dbName}'",
+                                           conn);
+
         await cmdKillConnections.ExecuteNonQueryAsync();
 
         using var cmdDropDb = new NpgsqlCommand($"DROP DATABASE IF EXISTS {_dbName}", conn);
