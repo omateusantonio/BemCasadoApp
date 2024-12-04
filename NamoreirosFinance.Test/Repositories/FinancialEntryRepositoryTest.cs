@@ -64,6 +64,41 @@ namespace NamoreirosFinance.Test.Repositories
             Assert.Equivalent(entry, result);
         }
 
+        [Fact]
+        public async Task Update_ShouldUpdateTheSelectedItem()
+        {
+            var entry = GetFinancialEntry();
+            await _repository.Add(entry);
+            var entryId = entry.Id;
+
+            entry.Description = "Updated Description";
+            entry.Value = 200;
+            entry.Type = TransactionType.Expense;
+
+            await _repository.Update(entry);
+
+            var result = await _repository.GetById(entryId);
+
+            Assert.NotNull(result);
+            Assert.Equal(entry.Description, result.Description);
+            Assert.Equal(entry.Value, result.Value);
+            Assert.Equal(entry.Type, result.Type);
+        }
+
+        [Fact]
+        public async Task Delete_ShouldRemoveTheSelectedItem()
+        {
+            var entry = GetFinancialEntry();
+            await _repository.Add(entry);
+            var entryId = entry.Id;
+
+            await _repository.Delete(entry);
+
+            var result = await _repository.GetById(entryId);
+
+            Assert.Null(result);
+        }
+
         private List<FinancialEntry> GetFinancialEntriesList()
         {
             return new()
