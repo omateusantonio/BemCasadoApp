@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NamoreirosFinance.Domain.Core.Entities.Transaction;
+using NamoreirosFinance.Domain.Core.Repositories;
 using NamoreirosFinance.Infrastructure.Context;
 
 namespace NamoreirosFinance.Infrastructure.Repositories
 {
-    public class FinancialEntryRepository : IRepository<FinancialEntry>
+    public class FinancialEntryRepository : IFinancialEntryRepository
     {
         private readonly AppDbContext _context;
         public FinancialEntryRepository(AppDbContext context)
