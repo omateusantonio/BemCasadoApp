@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NamoreirosFinance.WebApp", 
 	ProjectSection(ProjectDependencies) = postProject
 		{4404D3E3-8BBF-4993-B490-13CF7A7AFEE0} = {4404D3E3-8BBF-4993-B490-13CF7A7AFEE0}
 		{66C3884A-48AA-4CF1-B6F7-6FD78CFAB7B6} = {66C3884A-48AA-4CF1-B6F7-6FD78CFAB7B6}
+		{A5BF1989-DE85-471C-9A60-6064893F7797} = {A5BF1989-DE85-471C-9A60-6064893F7797}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NamoreirosFinance.Infrastructure", "NamoreirosFinance.Infrastructure\NamoreirosFinance.Infrastructure.csproj", "{4404D3E3-8BBF-4993-B490-13CF7A7AFEE0}"

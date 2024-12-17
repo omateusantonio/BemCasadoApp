@@ -1,9 +1,10 @@
-﻿using NamoreirosFinance.Domain.Core.Entities.Transaction;
+﻿using NamoreirosFinance.Application.Interfaces;
+using NamoreirosFinance.Domain.Core.Entities.Transaction;
 using NamoreirosFinance.Domain.Core.Repositories;
 
 namespace NamoreirosFinance.Application.Services
 {
-    public class FinancialEntryService : IFinancialEntryRepository
+    public class FinancialEntryService : IFinancialEntryService
     {
         private static IFinancialEntryRepository _repository;
 

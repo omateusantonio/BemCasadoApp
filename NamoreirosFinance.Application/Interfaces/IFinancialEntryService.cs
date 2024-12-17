@@ -4,10 +4,10 @@ namespace NamoreirosFinance.Application.Interfaces
 {
     public interface IFinancialEntryService
     {
-        Task<FinancialEntry> CreateAsync(FinancialEntry financialEntry);
-        Task<FinancialEntry> GetByIdAsync(int id);
-        Task<List<FinancialEntry>> GetAllAsync();
-        Task UpdateAsync(FinancialEntry financialEntry);
-        Task DeleteAsync(int id);
+        Task Add(FinancialEntry financialEntry);
+        Task<FinancialEntry> GetById(int id);
+        Task<List<FinancialEntry>> GetAll();
+        Task Update(FinancialEntry financialEntry);
+        Task Delete(FinancialEntry financialEntry);
     }
 }

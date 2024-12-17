@@ -1,8 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using NamoreirosFinance.Domain.Core.Repositories;
-using NamoreirosFinance.Infrastructure.Context;
 using NamoreirosFinance.Infrastructure.DependencyInjection;
-using NamoreirosFinance.Infrastructure.Repositories;
+using NamoreirosFinance.Application.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +9,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
