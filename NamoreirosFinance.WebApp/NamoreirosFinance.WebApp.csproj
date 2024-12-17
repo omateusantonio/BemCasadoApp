@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\NamoreirosFinance.Infrastructure\NamoreirosFinance.Infrastructure.csproj" />
+	  <ProjectReference Include="..\NamoreirosFinance.Application\NamoreirosFinance.Application.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using NamoreirosFinance.Infrastructure.Context;
+using NamoreirosFinance.Infrastructure.DependencyInjection;
+using NamoreirosFinance.Application.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,10 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("NamoreirosFinanceDB"));
-});
+
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
