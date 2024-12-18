@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NamoreirosFinance.Domain", "NamoreirosFinance.Domain\NamoreirosFinance.Domain.csproj", "{66C3884A-48AA-4CF1-B6F7-6FD78CFAB7B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{37B10856-9636-455E-8CBF-4E67122FAF66}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NamoreirosFinance.WebApp", "NamoreirosFinance.WebApp\NamoreirosFinance.WebApp.csproj", "{E2017301-E8EB-4354-B3D5-A28BE56B1D4A}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -22,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NamoreirosFinance.Test", "N
 		{66C3884A-48AA-4CF1-B6F7-6FD78CFAB7B6} = {66C3884A-48AA-4CF1-B6F7-6FD78CFAB7B6}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NamoreirosFinance.Application", "NamoreirosFinance.Application\NamoreirosFinance.Application.csproj", "{A5BF1989-DE85-471C-9A60-6064893F7797}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NamoreirosFinance.Application", "NamoreirosFinance.Application\NamoreirosFinance.Application.csproj", "{A5BF1989-DE85-471C-9A60-6064893F7797}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4404D3E3-8BBF-4993-B490-13CF7A7AFEE0} = {4404D3E3-8BBF-4993-B490-13CF7A7AFEE0}
 		{66C3884A-48AA-4CF1-B6F7-6FD78CFAB7B6} = {66C3884A-48AA-4CF1-B6F7-6FD78CFAB7B6}
