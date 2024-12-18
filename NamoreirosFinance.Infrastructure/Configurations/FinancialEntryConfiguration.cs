@@ -17,7 +17,7 @@ namespace NamoreirosFinance.Infrastructure.Configurations
                    .ValueGeneratedOnAdd();
 
             builder.Property(x => x.TransactionDate)
-                   .HasColumnName("date")
+                   .HasColumnName("transaction_date")
                    .IsRequired();
 
             builder.Property(x => x.Value)
