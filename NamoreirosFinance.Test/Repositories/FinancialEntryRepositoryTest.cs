@@ -20,7 +20,7 @@ namespace NamoreirosFinance.Test.Repositories
         {
             var entry = new FinancialEntry
             {
-                Date = DateTime.UtcNow,
+                TransactionDate = DateTime.UtcNow,
                 Value = 100,
                 Description = "Test Entry",
                 Type = TransactionType.Income
@@ -31,7 +31,7 @@ namespace NamoreirosFinance.Test.Repositories
             var result = await _repository.GetById(entry.Id);
 
             Assert.NotNull(result);
-            Assert.Equal(entry.Date, result.Date);
+            Assert.Equal(entry.TransactionDate, result.TransactionDate);
             Assert.Equal(entry.Value, result.Value);
             Assert.Equal(entry.Description, result.Description);
             Assert.Equal(entry.Type, result.Type);
@@ -107,21 +107,21 @@ namespace NamoreirosFinance.Test.Repositories
             {
                 new()
                 {
-                    Date = DateTime.UtcNow,
+                    TransactionDate = DateTime.UtcNow,
                     Value = 100,
                     Description = "Test Entry 1",
                     Type = TransactionType.Income
                 },
                 new()
                 {
-                    Date = DateTime.UtcNow,
+                    TransactionDate = DateTime.UtcNow,
                     Value = 100,
                     Description = "Test Entry 2",
                     Type = TransactionType.Expense
                 },
                 new()
                 {
-                    Date = DateTime.UtcNow,
+                    TransactionDate = DateTime.UtcNow,
                     Value = 50,
                     Description = "Test Entry 3",
                     Type = TransactionType.Income
@@ -133,7 +133,7 @@ namespace NamoreirosFinance.Test.Repositories
         {
             return new()
             {
-                Date = DateTime.UtcNow,
+                TransactionDate = DateTime.UtcNow,
                 Value = 100,
                 Description = "Test Entry",
                 Type = TransactionType.Income
