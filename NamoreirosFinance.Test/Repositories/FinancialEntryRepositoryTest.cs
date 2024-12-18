@@ -1,4 +1,5 @@
-﻿using NamoreirosFinance.Domain.Core.Entities.Transaction;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NamoreirosFinance.Domain.Core.Entities.Transaction;
 using NamoreirosFinance.Domain.Core.Enums;
 using NamoreirosFinance.Infrastructure.Repositories;
 
@@ -10,7 +11,8 @@ namespace NamoreirosFinance.Test.Repositories
 
         public FinancialEntryRepositoryTest()
         {
-            _repository = new FinancialEntryRepository(_context);
+            _repository = _serviceProvider.GetRequiredService<FinancialEntryRepository>()
+                                          ?? throw new Exception($"The application was unable to get the required service '{nameof(FinancialEntryRepository)}'");
         }
 
         [Fact]
