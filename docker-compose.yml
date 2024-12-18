@@ -1,0 +1,38 @@
+services:
+  postgres:
+    container_name: namoreiros_db
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: transactions_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - namoreiros_db_net
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin_namoreiros
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "mateusantonio23@live.com"
+      PGADMIN_DEFAULT_PASSWORD: "postgres"
+    ports:
+      - "15432:80"
+    depends_on:
+      - postgres
+    networks:
+      - namoreiros_db_net
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    name: namoreiros_postgres_data
+
+networks:
+  namoreiros_db_net:
+    name: namoreiros_db_net
+    driver: bridge
