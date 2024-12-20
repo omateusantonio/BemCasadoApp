@@ -1,23 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
         <UserSecretsId>57993bfb-cc85-4986-9d6b-8d8212432f08</UserSecretsId>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <!-- Configurações do SPA -->
         <SpaRoot>ClientApp\</SpaRoot>
         <SpaProxyServerUrl>http://localhost:4200</SpaProxyServerUrl>
         <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+        <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
     </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="8.*" />
-    </ItemGroup>
 
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
@@ -51,22 +44,23 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="8.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ClientApp\" />
-      <Folder Include="Controllers\" />
+        <ProjectReference Include="..\NamoreirosFinance.Infrastructure\NamoreirosFinance.Infrastructure.csproj" />
+        <ProjectReference Include="..\NamoreirosFinance.Application\NamoreirosFinance.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\NamoreirosFinance.Infrastructure\NamoreirosFinance.Infrastructure.csproj" />
-	  <ProjectReference Include="..\NamoreirosFinance.Application\NamoreirosFinance.Application.csproj" />
+        <Folder Include="ClientApp\" />
+        <Folder Include="Controllers\" />
+        <Folder Include="wwwroot\" />
     </ItemGroup>
 
 </Project>

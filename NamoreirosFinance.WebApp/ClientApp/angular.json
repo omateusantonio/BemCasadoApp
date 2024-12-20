@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "namoreiros-finance-web": {
+    "ClientApp": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/namoreiros-finance-web",
+            "outputPath": "dist/client-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "namoreiros-finance-web:build:production"
+              "buildTarget": "ClientApp:build:production"
             },
             "development": {
-              "buildTarget": "namoreiros-finance-web:build:development"
+              "buildTarget": "ClientApp:build:development"
             }
           },
           "defaultConfiguration": "development"
