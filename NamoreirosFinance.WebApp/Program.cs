@@ -14,6 +14,9 @@ builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+app.UseRouting();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -24,5 +27,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();
