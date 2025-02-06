@@ -6,7 +6,7 @@ import { RegistrationContentBoxComponent } from "../../components/registration-c
   standalone: true,
   imports: [RegistrationContentBoxComponent],
   templateUrl: './financial-entry-registration.component.html',
-  styleUrl: './financial-entry-registration.component.scss'
+  styleUrl: './financial-entry-registration.component.css'
 })
 export class FinancialEntryRegistrationComponent {
 
