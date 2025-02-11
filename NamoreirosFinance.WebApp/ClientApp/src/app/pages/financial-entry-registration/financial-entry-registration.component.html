@@ -1,17 +1,24 @@
 <div class="w-screen flex justify-center">
-    <app-registration-content-box box-title-text="Cadastro de entrada/saída" class="w-2/3">
-        <form class="ps-8">
-            <label class="form-control w-full max-w-xs">
-                <div class="label">
-                  <span class="label-text">What is your name?</span>
-                  <span class="label-text-alt">Top Right label</span>
-                </div>
-                <input type="text" placeholder="Type here" class="input input-bordered w-full max-w-xs p-8" />
-                <div class="label">
-                  <span class="label-text-alt">Bottom Left label</span>
-                  <span class="label-text-alt">Bottom Right label</span>
-                </div>
-              </label>
-        </form>
-    </app-registration-content-box>
+  <app-registration-content-box box-title-text="Cadastro de entrada/saída" class="w-2/3">
+      <form class="ps-8 pb-8 pe-8">
+          <label class="form-control w-full max-w-xs">
+              <div class="label">
+                <span class="label-text text-secondary-content">Valor da transação:</span>
+              </div>
+              <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">R$</span>
+                  <input type="text" class="input input-bordered w-full max-w-xs p-8 pl-10">
+              </div>
+          </label>
+          <label class="form-control w-full max-w-xs">
+              <div class="label">
+                <span class="label-text text-secondary-content">Valor da transação:</span>
+              </div>
+              <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">R$</span>
+                  <input type="text" class="input input-bordered w-full max-w-xs p-8 pl-10" />
+              </div>
+          </label>
+      </form>
+  </app-registration-content-box>
 </div>
