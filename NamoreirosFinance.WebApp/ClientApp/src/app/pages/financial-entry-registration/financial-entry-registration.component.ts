@@ -16,7 +16,7 @@ export class FinancialEntryRegistrationComponent {
   constructor(private formBuilder: FormBuilder) {
     this.financialEntryForm = this.formBuilder.group({
       transactionDescription: ["", Validators.required],
-      transactionValue: ["", [Validators.required, Validators.min(0.01), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      transactionValue: ["", [Validators.required, Validators.min(0.01), Validators.pattern(/^\d+(\,\d{1,2})?$/)]],
       transactionDate: ["", Validators.required],
       transactionType: ["Entrada", Validators.required]
     })

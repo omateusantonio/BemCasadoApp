@@ -31,11 +31,14 @@
                   <input 
                     formControlName="transactionValue" 
                     type="text" 
-                    class="input input-bordered w-full p-8 pl-10">
+                    class="input input-bordered w-full p-8 pl-10"
+                    [ngClass]="{'input-error': financialEntryForm.get('transactionValue')?.invalid && financialEntryForm.get('transactionValue')?.touched}" />
               </div>
-              <p *ngIf="financialEntryForm.get('transactionValue')?.touched && financialEntryForm.get('transactionValue')?.errors">É obrigatório informar o valor da transação</p>
-              <p>O valor da transação deve ser maior do que zero</p>
-              <p>O valor da transação deve estar no formato 0,00</p>
+              <div *ngIf="financialEntryForm.get('transactionValue')?.invalid && financialEntryForm.get('transactionValue')?.touched" class="text-error text-sm mt-1">
+                <p *ngIf="financialEntryForm.get('transactionValue')?.errors?.['required']">É obrigatório informar o valor da transação</p>
+                <p *ngIf="financialEntryForm.get('transactionValue')?.errors?.['min']">O valor da transação deve ser maior do que zero</p>
+                <p *ngIf="financialEntryForm.get('transactionValue')?.errors?.['pattern']">O valor da transação deve estar no formato 0,00</p>
+              </div>
           </label>
           <label class="form-control w-full pb-4">
             <div class="label">
@@ -50,8 +53,10 @@
               <input 
                 formControlName="transactionDate" 
                 type="text" 
-                class="input input-bordered w-full p-8 pl-10" />
+                class="input input-bordered w-full p-8 pl-10"
+                [ngClass]="{'input-error': financialEntryForm.get('transactionDate')?.invalid && financialEntryForm.get('transactionDate')?.touched}" />
             </div>
+            <p *ngIf="financialEntryForm.get('transactionDate')?.invalid && financialEntryForm.get('transactionDate')?.touched" class="text-error">É obrigatório informar a data </p>
           </label>
           <label class="form-control w-full pb-4">
             <div class="label">
