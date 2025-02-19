@@ -1,9 +1,10 @@
-import { Component, Injectable } from '@angular/core';
+import { Component } from '@angular/core';
 import { RegistrationContentBoxComponent } from "../../components/registration-content-box/registration-content-box.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FinancialEntryService } from '../../shared/services/financial-entry.service';
+import { IFinancialEntry } from '../../shared/interfaces/financial-entry.interface';
 
 @Component({
   selector: 'app-financial-entry-registration',
@@ -15,28 +16,26 @@ import { FinancialEntryService } from '../../shared/services/financial-entry.ser
 
 export class FinancialEntryRegistrationComponent {
   financialEntryForm: FormGroup;
+  entriesList: IFinancialEntry[] = [];
 
   constructor(private formBuilder: FormBuilder, 
     private httpClient: HttpClient, 
     private financialEntryService: FinancialEntryService) {
     this.financialEntryForm = this.formBuilder.group({
-      transactionDescription: ["", Validators.required],
-      transactionValue: ["", [Validators.required, Validators.min(0.01), Validators.pattern(/^\d+(\,\d{1,2})?$/)]],
+      description: ["", Validators.required],
+      value: ["", [Validators.required, Validators.min(0.01), Validators.pattern(/^\d+(\,\d{1,2})?$/)]],
       transactionDate: ["", Validators.required],
-      transactionType: ["Entrada", Validators.required]
+      type: ["Entrada", Validators.required]
     })
   }
 
   ngOnInit(): void {
-    
+    this.financialEntryService.getEntries()
+                              .subscribe((response) => this.entriesList = response);
   }
 
   onSubmit() {
-    this.httpClient.get("http://localhost:5214/api/FinancialEntry/v1", {responseType: 'json'})
-                  .subscribe((response) => {
-                    debugger
-                    console.log(response);
-                  });
+    
   }
   
 }

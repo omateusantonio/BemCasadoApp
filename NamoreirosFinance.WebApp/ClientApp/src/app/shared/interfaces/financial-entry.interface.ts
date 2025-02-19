@@ -1,7 +1,7 @@
 export interface IFinancialEntry {
     id: number;
-    transactionDescription: string;
-    transactionValue: number;
+    description: string;
+    value: number;
     transactionDate: Date;
-    transactionType: string;
+    type: string;
 }

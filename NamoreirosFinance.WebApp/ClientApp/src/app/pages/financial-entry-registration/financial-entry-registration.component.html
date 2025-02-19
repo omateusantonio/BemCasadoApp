@@ -13,13 +13,13 @@
                 </svg>
               </span>
               <input 
-                formControlName="transactionDescription" 
+                formControlName="description" 
                 type="text" 
-                class="input input-bordered w-full p-8 pl-10"
-                [ngClass]="{'input-error': financialEntryForm.get('transactionDescription')?.invalid && financialEntryForm.get('transactionDescription')?.touched}" />
+                class="input input-bordered w-full p-8 pl-10 bg-primary-content"
+                [ngClass]="{'input-error': financialEntryForm.get('description')?.invalid && financialEntryForm.get('description')?.touched}" />
             </div>
             <p 
-              *ngIf="financialEntryForm.get('transactionDescription')?.invalid && financialEntryForm.get('transactionDescription')?.touched" 
+              *ngIf="financialEntryForm.get('description')?.invalid && financialEntryForm.get('description')?.touched" 
               class="text-error text-sm mt-1">É obrigatório informar a descrição da transação</p>
           </label>
           <label class="form-control w-full pb-4">
@@ -29,15 +29,15 @@
               <div class="relative">
                   <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">R$</span>
                   <input 
-                    formControlName="transactionValue" 
+                    formControlName="value" 
                     type="text" 
-                    class="input input-bordered w-full p-8 pl-10"
-                    [ngClass]="{'input-error': financialEntryForm.get('transactionValue')?.invalid && financialEntryForm.get('transactionValue')?.touched}" />
+                    class="input input-bordered w-full p-8 pl-10 bg-primary-content"
+                    [ngClass]="{'input-error': financialEntryForm.get('value')?.invalid && financialEntryForm.get('value')?.touched}" />
               </div>
-              <div *ngIf="financialEntryForm.get('transactionValue')?.invalid && financialEntryForm.get('transactionValue')?.touched" class="text-error text-sm mt-1">
-                <p *ngIf="financialEntryForm.get('transactionValue')?.errors?.['required']">É obrigatório informar o valor da transação</p>
-                <p *ngIf="financialEntryForm.get('transactionValue')?.errors?.['min']">O valor da transação deve ser maior do que zero</p>
-                <p *ngIf="financialEntryForm.get('transactionValue')?.errors?.['pattern']">O valor da transação deve estar no formato 0,00</p>
+              <div *ngIf="financialEntryForm.get('value')?.invalid && financialEntryForm.get('value')?.touched" class="text-error text-sm mt-1">
+                <p *ngIf="financialEntryForm.get('value')?.errors?.['required']">É obrigatório informar o valor da transação</p>
+                <p *ngIf="financialEntryForm.get('value')?.errors?.['min']">O valor da transação deve ser maior do que zero</p>
+                <p *ngIf="financialEntryForm.get('value')?.errors?.['pattern']">O valor da transação deve estar no formato 0,00</p>
               </div>
           </label>
           <!-- <label class="form-control w-full pb-4">
@@ -64,8 +64,8 @@
             </div>
             <div class="relative">
               <select 
-                formControlName="transactionType" 
-                class="select select-bordered w-full h-16">
+                formControlName="type" 
+                class="select select-bordered w-full h-16 bg-primary-content">
                 <option>Entrada</option>
                 <option>Saída</option>
               </select>
@@ -75,5 +75,40 @@
             <span>Cadastrar transação</span>
           </button>
         </form>
+  </app-registration-content-box>
+</div>
+
+<div class="w-screen flex justify-center">
+  <app-registration-content-box box-title-text="Entradas/saídas registradas" class="w-2/3">
+    <div class="p-8">
+      <table class="table bg-primary-content">
+        <thead>
+          <tr>
+            <th>
+              <label>
+                <input type="checkbox" class="checkbox" />
+              </label>
+            </th>
+            <th>Valor</th>
+            <th>Descrição</th>
+            <th>Data</th>
+            <th>Tipo de transação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of entriesList;">
+            <th>
+              <label>
+                <input type="checkbox" class="checkbox" />
+              </label>
+            </th>
+            <td>{{ entry.value }}</td>
+            <td>{{ entry.description }}</td>
+            <td>{{ entry.transactionDate | date }}</td>
+            <td>{{ entry.type }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </app-registration-content-box>
 </div>
