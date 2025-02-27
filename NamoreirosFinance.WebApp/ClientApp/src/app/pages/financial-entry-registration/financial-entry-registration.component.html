@@ -40,11 +40,11 @@
                 <p *ngIf="financialEntryForm.get('value')?.errors?.['pattern']">O valor da transação deve estar no formato 0,00</p>
               </div>
           </label>
-          <!-- <label class="form-control w-full pb-4">
+          <label class="form-control w-full pb-4">
             <div class="label">
               <span class="label-text text-secondary-content">Data (dd/mm/aaaa):</span>
             </div>
-            <div>
+            <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 448 512" fill="currentColor">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M128 0c17.7 0 32 14.3 32 32l0 32 128 0 0-32c0-17.7 14.3-32 32-32s32 14.3 32 32l0 32 48 0c26.5 0 48 21.5 48 48l0 48L0 160l0-48C0 85.5 21.5 64 48 64l48 0 0-32c0-17.7 14.3-32 32-32zM0 192l448 0 0 272c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 192zm64 80l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm128 0l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM64 400l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm112 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16z"/>
@@ -52,12 +52,11 @@
               </span>
               <input 
                 formControlName="transactionDate" 
-                type="{{ teste | date }}" 
-                class="input input-bordered w-full p-8 pl-10"
+                class="input input-bordered w-full p-8 pl-10 bg-primary-content"
                 [ngClass]="{'input-error': financialEntryForm.get('transactionDate')?.invalid && financialEntryForm.get('transactionDate')?.touched}" />
             </div>
             <p *ngIf="financialEntryForm.get('transactionDate')?.invalid && financialEntryForm.get('transactionDate')?.touched" class="text-error">É obrigatório informar a data </p>
-          </label> -->
+          </label>
           <label class="form-control w-full pb-4">
             <div class="label">
               <span class="label-text text-secondary-content">Tipo:</span>
@@ -66,8 +65,9 @@
               <select 
                 formControlName="type" 
                 class="select select-bordered w-full h-16 bg-primary-content">
-                <option>Entrada</option>
-                <option>Saída</option>
+                <option *ngFor="let type of transactionTypes" [value]="type.value">
+                  {{type.label}}
+                </option>
               </select>
             </div>
           </label>
@@ -89,9 +89,9 @@
                 <input type="checkbox" class="checkbox" />
               </label>
             </th>
-            <th>Valor</th>
-            <th>Descrição</th>
             <th>Data</th>
+            <th>Descrição</th>
+            <th>Valor</th>
             <th>Tipo de transação</th>
           </tr>
         </thead>
@@ -102,9 +102,9 @@
                 <input type="checkbox" class="checkbox" />
               </label>
             </th>
-            <td>{{ entry.value }}</td>
+            <td>{{ entry.transactionDate | date:'dd/MM/yyyy' }}</td>
             <td>{{ entry.description }}</td>
-            <td>{{ entry.transactionDate | date }}</td>
+            <td>{{ entry.value | currency:'BRL' }}</td>
             <td>{{ entry.type }}</td>
           </tr>
         </tbody>
