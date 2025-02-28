@@ -7,6 +7,7 @@ import { IFinancialEntry } from '../../shared/interfaces/financial-entry.interfa
 import { IEnumOption } from '../../shared/interfaces/enum-option.interface';
 import { TransactionType } from '../../shared/enums/transaction-type.enum';
 import { EnumService } from '../../shared/services/enum.service';
+import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 
 @Component({
   selector: 'app-financial-entry-registration',
@@ -20,13 +21,18 @@ export class FinancialEntryRegistrationComponent {
   financialEntryForm: FormGroup;
   entriesList: IFinancialEntry[] = [];
   transactionTypes: IEnumOption[] = [];
+  TransactionTypeEnum = TransactionType;
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
-    private enumService: EnumService) {
+    private enumService: EnumService,
+    private dateFormat: DateFormatPipe) {
+
+    const brazilianMonetaryFormat = /^\d+(\,\d{1,2})?$/;
+
     this.financialEntryForm = this.formBuilder.group({
       description: ["", Validators.required],
-      value: ["", [Validators.required, Validators.min(0.01), Validators.pattern(/^\d+(\,\d{1,2})?$/)]],
+      value: ["", [Validators.required, Validators.min(0.01), Validators.pattern(brazilianMonetaryFormat)]],
       transactionDate: ["", Validators.required],
       type: [TransactionType.Income, Validators.required]
     })
@@ -35,6 +41,14 @@ export class FinancialEntryRegistrationComponent {
   ngOnInit(): void {
     this._defineEnums();
     this._getAllEntries();
+    this._setupDateMaskListener();
+  }
+
+  private _setupDateMaskListener() {
+    this.financialEntryForm.get('transactionDate')?.valueChanges.subscribe(value => {
+      const maskedDate = this.dateFormat.transform(value);
+      this.financialEntryForm.get('transactionDate')?.setValue(maskedDate, {emitEvent: false});
+    });
   }
 
   onSubmit() {
@@ -54,12 +68,12 @@ export class FinancialEntryRegistrationComponent {
   }
 
   private _getValuesFromForm(): IFinancialEntry {
-    const formValue = this.financialEntryForm.getRawValue();
+    const formValue = this.financialEntryForm.value;
 
     const newEntry: IFinancialEntry = {
       description: formValue.description,
       value: formValue.value,
-      transactionDate: new Date(), //formValue.transactionDate,
+      transactionDate: new Date(),
       type: formValue.type
     }
 

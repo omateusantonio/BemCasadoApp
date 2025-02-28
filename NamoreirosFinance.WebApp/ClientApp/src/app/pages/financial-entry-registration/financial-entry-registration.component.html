@@ -20,7 +20,8 @@
             </div>
             <p 
               *ngIf="financialEntryForm.get('description')?.invalid && financialEntryForm.get('description')?.touched" 
-              class="text-error text-sm mt-1">É obrigatório informar a descrição da transação</p>
+              class="text-error text-sm mt-1">É obrigatório informar a descrição da transação</p> 
+              <!-- change this conditional to ng-template instead of using directly a p tag -->
           </label>
           <label class="form-control w-full pb-4">
               <div class="label">
@@ -65,7 +66,7 @@
               <select 
                 formControlName="type" 
                 class="select select-bordered w-full h-16 bg-primary-content">
-                <option *ngFor="let type of transactionTypes" [value]="type.value">
+                <option *ngFor="let type of transactionTypes" [value]="type.value | number">
                   {{type.label}}
                 </option>
               </select>
@@ -102,10 +103,17 @@
                 <input type="checkbox" class="checkbox" />
               </label>
             </th>
-            <td>{{ entry.transactionDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ entry.transactionDate | date:'dd/MM/yyyy':'pt-BR' }}</td>
             <td>{{ entry.description }}</td>
-            <td>{{ entry.value | currency:'BRL' }}</td>
-            <td>{{ entry.type }}</td>
+            <td>{{ entry.value | currency:'BRL'}}</td>
+            <td [ngSwitch]="entry.type">
+              <div class="badge badge-success gap-2 justify-end" *ngSwitchCase="TransactionTypeEnum.Income">
+                Entrada
+              </div>
+              <div class="badge badge-error gap-2 justify-end" *ngSwitchCase="TransactionTypeEnum.Expense">
+                Saída
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
