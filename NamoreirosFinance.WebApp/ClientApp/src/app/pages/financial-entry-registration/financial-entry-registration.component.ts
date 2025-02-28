@@ -8,6 +8,7 @@ import { IEnumOption } from '../../shared/interfaces/enum-option.interface';
 import { TransactionType } from '../../shared/enums/transaction-type.enum';
 import { EnumService } from '../../shared/services/enum.service';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
+import { BrazilianCurrencyToFloatPipe } from '../../shared/pipes/brazilian-currency-to-float.pipe';
 
 @Component({
   selector: 'app-financial-entry-registration',
@@ -26,7 +27,8 @@ export class FinancialEntryRegistrationComponent {
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
     private enumService: EnumService,
-    private dateFormat: DateFormatPipe) {
+    private dateFormat: DateFormatPipe,
+    private brazilianCurrencyToFloat: BrazilianCurrencyToFloatPipe) {
 
     const brazilianMonetaryFormat = /^\d+(\,\d{1,2})?$/;
 
@@ -53,8 +55,10 @@ export class FinancialEntryRegistrationComponent {
 
   onSubmit() {
     if (this.financialEntryForm.valid) {
-      const values: IFinancialEntry = this._getValuesFromForm();
-      
+      const values = this._getValuesFromForm();
+      debugger
+      this._createNewEntry(values);
+      this.financialEntryForm.reset({type: [TransactionType.Income]});
     }
   }
 
@@ -64,22 +68,31 @@ export class FinancialEntryRegistrationComponent {
   }
 
   private _createNewEntry(entry: IFinancialEntry): void {
-    this.financialEntryService.addEntry(entry);
+    this.financialEntryService.addEntry(entry)
+                              .subscribe(response => this.entriesList.push(response));
   }
 
   private _getValuesFromForm(): IFinancialEntry {
     const formValue = this.financialEntryForm.value;
 
-    const newEntry: IFinancialEntry = {
+    const newEntry = {
       description: formValue.description,
-      value: formValue.value,
-      transactionDate: new Date(),
-      type: formValue.type
+      value: this.brazilianCurrencyToFloat.transform(formValue.value),
+      transactionDate: this._getDateObject(formValue.transactionDate),
+      type: formValue.type[0] //convert to number
     }
 
     return newEntry;
   }
-  
+
+  private _getDateObject(date: string): Date {
+    const dateParts = date.split('/');
+    const day = parseInt(dateParts[0]);
+    const month = parseInt(dateParts[1]) - 1;
+    const year = parseInt(dateParts[2]);
+    return new Date(year, month, day);
+  }
+
   private _defineEnums() {
     this.transactionTypes = this.enumService.getTransactionTypes();
   }

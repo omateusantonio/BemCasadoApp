@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -14,7 +15,7 @@ namespace NamoreirosFinance.Infrastructure.DependencyInjection
         {
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseNpgsql(configuration.GetConnectionString("NamoreirosFinanceDB"));
+                options.UseNpgsql(configuration.GetConnectionString("NamoreirosFinanceDB")).ConfigureWarnings(warnings => warnings.Log(RelationalEventId.PendingModelChangesWarning));
             });
 
             services.TryAddScoped<IFinancialEntryRepository, FinancialEntryRepository>();
