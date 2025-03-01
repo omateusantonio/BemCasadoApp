@@ -12,17 +12,16 @@ export class BrazilianCurrencyToFloatPipe implements PipeTransform {
 
   transform(value: string): number {
     if (!value) return 0;
-    const isValueString = typeof value === 'string';
+
     const isValueNumber = typeof value === 'number';
 
     if (isValueNumber) return value;
     
-    if (value && isValueString) {
-      const formattedValue = parseFloat(value.replaceAll(".", "").replace(",", "."));
-      return formattedValue;
-    }
+    const formattedValue = parseFloat(value.replaceAll(".", "").replace(",", ".").trim());
 
-    return 0;
+    if (isNaN(formattedValue)) return 0;
+
+    return formattedValue;
   }
 
 }

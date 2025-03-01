@@ -23,6 +23,7 @@ export class FinancialEntryRegistrationComponent {
   entriesList: IFinancialEntry[] = [];
   transactionTypes: IEnumOption[] = [];
   TransactionTypeEnum = TransactionType;
+  private selectedCheckboxes: number[] = [];
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
@@ -47,19 +48,39 @@ export class FinancialEntryRegistrationComponent {
   }
 
   private _setupDateMaskListener() {
-    this.financialEntryForm.get('transactionDate')?.valueChanges.subscribe(value => {
+    this.financialEntryForm.get("transactionDate")?.valueChanges.subscribe(value => {
       const maskedDate = this.dateFormat.transform(value);
-      this.financialEntryForm.get('transactionDate')?.setValue(maskedDate, {emitEvent: false});
+      this.financialEntryForm.get("transactionDate")?.setValue(maskedDate, {emitEvent: false});
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.financialEntryForm.valid) {
       const values = this._getValuesFromForm();
-      debugger
       this._createNewEntry(values);
       this.financialEntryForm.reset({type: [TransactionType.Income]});
     }
+  }
+  
+  onChangeAllCheckboxes(event: any) {
+    const isChecked = event.target.checked;
+    this.selectedCheckboxes = isChecked ? this.entriesList.map(entry => entry.id!) : [];
+  }
+
+  onCheckboxChange(selectedId: number): any {
+    const isEntryAlreadySelected = this.selectedCheckboxes.includes(selectedId);
+    const selectedIdPosition = this.selectedCheckboxes.indexOf(selectedId);
+
+    if (isEntryAlreadySelected) return this.selectedCheckboxes.splice(selectedIdPosition, 1);
+    this.selectedCheckboxes.push(selectedId);
+  }
+
+  isSelected(entryId: number): boolean {
+    return this.selectedCheckboxes.includes(entryId);
+  }
+
+  isEverythingSelected(): boolean {
+    return this.selectedCheckboxes.length === this.entriesList.length;
   }
 
   private _getAllEntries(): void {
@@ -79,21 +100,21 @@ export class FinancialEntryRegistrationComponent {
       description: formValue.description,
       value: this.brazilianCurrencyToFloat.transform(formValue.value),
       transactionDate: this._getDateObject(formValue.transactionDate),
-      type: formValue.type[0] //convert to number
+      type: parseInt(formValue.type)
     }
 
     return newEntry;
   }
 
   private _getDateObject(date: string): Date {
-    const dateParts = date.split('/');
+    const dateParts = date.split("/");
     const day = parseInt(dateParts[0]);
     const month = parseInt(dateParts[1]) - 1;
     const year = parseInt(dateParts[2]);
     return new Date(year, month, day);
   }
 
-  private _defineEnums() {
+  private _defineEnums(): void {
     this.transactionTypes = this.enumService.getTransactionTypes();
   }
   

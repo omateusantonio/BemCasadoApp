@@ -3,5 +3,5 @@ export interface IFinancialEntry {
     description: string;
     value: number;
     transactionDate: Date;
-    type: string;
+    type: number;
 }
