@@ -75,6 +75,11 @@ export class FinancialEntryRegistrationComponent {
     this.selectedCheckboxes.push(selectedId);
   }
 
+  onClickEdit(entry: IFinancialEntry): void {
+    debugger
+    console.log("Edit entry", entry);
+  }
+
   isSelected(entryId: number): boolean {
     return this.selectedCheckboxes.includes(entryId);
   }
