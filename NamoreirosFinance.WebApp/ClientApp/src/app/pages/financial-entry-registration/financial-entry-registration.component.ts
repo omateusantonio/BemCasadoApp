@@ -24,6 +24,7 @@ export class FinancialEntryRegistrationComponent {
   transactionTypes: IEnumOption[] = [];
   TransactionTypeEnum = TransactionType;
   private selectedCheckboxes: number[] = [];
+  isEditMode: boolean = false;
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
@@ -75,7 +76,9 @@ export class FinancialEntryRegistrationComponent {
     this.selectedCheckboxes.push(selectedId);
   }
 
-  onClickEdit(entry: IFinancialEntry): void {
+  onClickUpdate(entry: IFinancialEntry): void {
+    this.isEditMode = !this.isEditMode;
+    console.log("Update mode activated:", this.isEditMode);
     debugger
     console.log("Edit entry", entry);
   }
