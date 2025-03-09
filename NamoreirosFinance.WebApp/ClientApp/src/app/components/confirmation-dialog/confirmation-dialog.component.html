@@ -1,0 +1,11 @@
+<div class="modal" [class.modal-open]="isOpen">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg">{{ title }}</h3>
+      <p class="py-4">{{ message }}</p>
+      <div class="modal-action">
+        <button class="btn btn-success" (click)="onConfirm()">Confirmar</button>
+        <button class="btn btn-ghost" (click)="onCancel()">Cancelar</button>
+      </div>
+    </div>
+    <div class="modal-backdrop" (click)="onCancel()"></div>
+</div>

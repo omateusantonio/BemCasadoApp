@@ -9,23 +9,27 @@ import { TransactionType } from '../../shared/enums/transaction-type.enum';
 import { EnumService } from '../../shared/services/enum.service';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { BrazilianCurrencyToFloatPipe } from '../../shared/pipes/brazilian-currency-to-float.pipe';
+import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-financial-entry-registration',
   standalone: true,
-  imports: [RegistrationContentBoxComponent, ReactiveFormsModule, CommonModule],
+  imports: [RegistrationContentBoxComponent, ReactiveFormsModule, CommonModule, ConfirmationDialogComponent],
   templateUrl: './financial-entry-registration.component.html',
   styleUrl: './financial-entry-registration.component.css'
 })
 
 export class FinancialEntryRegistrationComponent implements OnInit {
-  private selectedCheckboxes: number[] = [];
-  private selectedEntryId: number | null = null;
+  private _selectedCheckboxes: number[] = [];
+  private _selectedEntryId: number | null = null;
+  private _entryToDeleteId: number | null = null;
   financialEntryForm: FormGroup;
   entriesList: IFinancialEntry[] = [];
   transactionTypes: IEnumOption[] = [];
   TransactionTypeEnum = TransactionType;
   isEditMode: boolean = false;
+  isConfirmationDialogOpen: boolean = false;
+  confirmationDialogMessage: string = '';
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
@@ -57,28 +61,29 @@ export class FinancialEntryRegistrationComponent implements OnInit {
       this._updateEntry(updatedEntry);
       this._resetForm();
       this.isEditMode = false;
+      this._selectedEntryId = null;
     }
   }
   
   onChangeAllCheckboxes(event: any) {
     const isChecked = event.target.checked;
-    this.selectedCheckboxes = isChecked ? this.entriesList.map(entry => entry.id!) : [];
+    this._selectedCheckboxes = isChecked ? this.entriesList.map(entry => entry.id!) : [];
   }
 
   onCheckboxChange(selectedId: number): void {
-    const isEntryAlreadySelected = this.selectedCheckboxes.includes(selectedId);
-    const selectedIdPosition = this.selectedCheckboxes.indexOf(selectedId);
+    const isEntryAlreadySelected = this._selectedCheckboxes.includes(selectedId);
+    const selectedIdPosition = this._selectedCheckboxes.indexOf(selectedId);
 
     if (isEntryAlreadySelected) {
-      this.selectedCheckboxes.splice(selectedIdPosition, 1);
+      this._selectedCheckboxes.splice(selectedIdPosition, 1);
       return;
     }
-    this.selectedCheckboxes.push(selectedId);
+    this._selectedCheckboxes.push(selectedId);
   }
 
   onClickUpdate(entry: IFinancialEntry): void {
     if (!this.isEditMode) this.isEditMode = true;
-    this.selectedEntryId = entry.id!;
+    this._selectedEntryId = entry.id!;
   
     const formattedEntry = this._formatEntryForForm(entry);
   
@@ -91,12 +96,27 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this.isEditMode = !this.isEditMode;
   }
 
+  onClickDelete(entry: IFinancialEntry): void {
+    this._entryToDeleteId = entry.id!;
+    this.confirmationDialogMessage = `Tem certeza de que deseja excluir a transação "${entry.description}"?`;
+    this.isConfirmationDialogOpen = true;
+  }
+
+  onConfirmDelete(): void {
+    if (this._entryToDeleteId || this._entryToDeleteId === 0) this._deleteEntry(this._entryToDeleteId);
+  }
+  
+  onCancelDelete(): void {
+    this.isConfirmationDialogOpen = false;
+    this._entryToDeleteId = null;
+  }
+
   isSelected(entryId: number): boolean {
-    return this.selectedCheckboxes.includes(entryId);
+    return this._selectedCheckboxes.includes(entryId);
   }
 
   isEverythingSelected(): boolean {
-    return this.selectedCheckboxes.length === this.entriesList.length;
+    return this._selectedCheckboxes.length === this.entriesList.length;
   }
 
   private _createForm(): FormGroup {
@@ -142,8 +162,17 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   private _updateEntry(updatedEntry: IFinancialEntry): void {
     this.financialEntryService.updateEntry(updatedEntry)
                               .subscribe(() => {
-                                const entryIndex = this.entriesList.findIndex(entry => entry.id === this.selectedEntryId);
+                                const entryIndex = this.entriesList.findIndex(entry => entry.id === this._selectedEntryId);
                                 this.entriesList[entryIndex] = updatedEntry;
+                              });
+  }
+
+  private _deleteEntry(entryId: number): void {
+    this.financialEntryService.deleteEntry(this._entryToDeleteId!)
+                              .subscribe(() => {
+                                this.entriesList = this.entriesList.filter(entry => entry.id !== this._entryToDeleteId);
+                                this.isConfirmationDialogOpen = false;
+                                this._entryToDeleteId = null;
                               });
   }
 
@@ -157,7 +186,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
       type: parseInt(formValue.type)
     }
 
-    if (this.selectedEntryId) entry.id = this.selectedEntryId;
+    if (this._selectedEntryId) entry.id = this._selectedEntryId;
 
     return entry;
   }
