@@ -34,14 +34,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     private brazilianCurrencyToFloat: BrazilianCurrencyToFloatPipe,
     private scroller: ViewportScroller) {
 
-    const brazilianMonetaryFormat = /^\d+(\,\d{1,2})?$/;
-
-    this.financialEntryForm = this.formBuilder.group({
-      description: ["", Validators.required],
-      value: ["", [Validators.required, Validators.min(0.01), Validators.pattern(brazilianMonetaryFormat)]],
-      transactionDate: ["", Validators.required],
-      type: [TransactionType.Income, Validators.required]
-    })
+    this.financialEntryForm = this._createForm();
   }
 
   ngOnInit(): void {
@@ -50,30 +43,19 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this._setupDateMaskListener();
   }
 
-  private _setupDateMaskListener() {
-    this.financialEntryForm.get("transactionDate")?.valueChanges.subscribe(value => {
-      const maskedDate = this.dateFormat.transform(value);
-      this.financialEntryForm.get("transactionDate")?.setValue(maskedDate, {emitEvent: false});
-    });
-  }
-
   onSubmit(): void {
     if (this.financialEntryForm.valid) {
       const newEntry = this._getValuesFromForm();
       this._createNewEntry(newEntry);
-      this.financialEntryForm.reset({type: [TransactionType.Income]});
+      this._resetForm();
     }
   }
 
   onSubmitUpdate(): void {
     if (this.financialEntryForm.valid) {
       const updatedEntry = this._getValuesFromForm();
-      this.financialEntryService.updateEntry(updatedEntry)
-                                .subscribe(() => {
-                                  const entryIndex = this.entriesList.findIndex(entry => entry.id === this.selectedEntryId);
-                                  this.entriesList[entryIndex] = updatedEntry;
-                                });
-      this.financialEntryForm.reset({type: [TransactionType.Income]});
+      this._updateEntry(updatedEntry);
+      this._resetForm();
       this.isEditMode = false;
     }
   }
@@ -83,11 +65,14 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this.selectedCheckboxes = isChecked ? this.entriesList.map(entry => entry.id!) : [];
   }
 
-  onCheckboxChange(selectedId: number): any {
+  onCheckboxChange(selectedId: number): void {
     const isEntryAlreadySelected = this.selectedCheckboxes.includes(selectedId);
     const selectedIdPosition = this.selectedCheckboxes.indexOf(selectedId);
 
-    if (isEntryAlreadySelected) return this.selectedCheckboxes.splice(selectedIdPosition, 1);
+    if (isEntryAlreadySelected) {
+      this.selectedCheckboxes.splice(selectedIdPosition, 1);
+      return;
+    }
     this.selectedCheckboxes.push(selectedId);
   }
 
@@ -95,14 +80,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     if (!this.isEditMode) this.isEditMode = true;
     this.selectedEntryId = entry.id!;
   
-    const formattedValue = this._formatFloatToBrazilianCurrency(entry.value);
-    const formattedDate = this._formatDateToBrazilianFormat(entry.transactionDate);
-  
-    const formattedEntry = {
-      ...entry,
-      value: formattedValue,
-      transactionDate: formattedDate
-    };
+    const formattedEntry = this._formatEntryForForm(entry);
   
     this.financialEntryForm.patchValue(formattedEntry);
     this._scrollToForm();
@@ -121,6 +99,36 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     return this.selectedCheckboxes.length === this.entriesList.length;
   }
 
+  private _createForm(): FormGroup {
+    const brazilianMonetaryFormat = /^\d+(\,\d{1,2})?$/;
+    
+    return this.formBuilder.group({
+      description: ["", Validators.required],
+      value: ["", [Validators.required, Validators.min(0.01), Validators.pattern(brazilianMonetaryFormat)]],
+      transactionDate: ["", Validators.required],
+      type: [TransactionType.Income, Validators.required]
+    });
+  }
+
+  private _resetForm(): void {
+    this.financialEntryForm.reset({type: TransactionType.Income});
+  }
+
+  private _setupDateMaskListener() {
+    this.financialEntryForm.get("transactionDate")?.valueChanges.subscribe(value => {
+      const maskedDate = this.dateFormat.transform(value);
+      this.financialEntryForm.get("transactionDate")?.setValue(maskedDate, {emitEvent: false});
+    });
+  }
+
+  private _formatEntryForForm(entry: IFinancialEntry): any {
+    return {
+      ...entry,
+      value: this._formatFloatToBrazilianCurrency(entry.value),
+      transactionDate: this._formatDateToBrazilianFormat(entry.transactionDate)
+    };
+  }
+
   private _getAllEntries(): void {
     this.financialEntryService.getEntries()
                               .subscribe((response) => this.entriesList = response);
@@ -129,6 +137,14 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   private _createNewEntry(entry: IFinancialEntry): void {
     this.financialEntryService.addEntry(entry)
                               .subscribe(response => this.entriesList.push(response));
+  }
+
+  private _updateEntry(updatedEntry: IFinancialEntry): void {
+    this.financialEntryService.updateEntry(updatedEntry)
+                              .subscribe(() => {
+                                const entryIndex = this.entriesList.findIndex(entry => entry.id === this.selectedEntryId);
+                                this.entriesList[entryIndex] = updatedEntry;
+                              });
   }
 
   private _getValuesFromForm(): IFinancialEntry {
