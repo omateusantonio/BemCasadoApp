@@ -1,5 +1,5 @@
 <div class="w-screen flex justify-center">
-  <app-registration-content-box box-title-text="Cadastro de entrada/saída" class="w-2/3">
+  <app-registration-content-box id="financialEntryFormContainerId" box-title-text="Cadastro de entrada/saída" class="w-2/3">
       <form class="ps-8 pb-8 pe-8 w-full" [formGroup]="financialEntryForm">
           <label class="form-control w-full pb-4">
             <div class="label">
@@ -77,11 +77,11 @@
               <span>Cadastrar transação</span>
             </button>
           } @else {
-            <div class="w-full justify-between flex">
-              <button class="btn w-3/4" type="submit" (click)="onSubmit()">
+            <div class="w-full flex justify-between gap-4">
+              <button class="btn flex-1" type="submit" (click)="onSubmitUpdate()">
                 <span>Atualizar transação</span>
               </button>
-              <button class="btn w-1/4 ml-2" type="submit" (click)="onSubmit()"> 
+              <button class="btn btn-neutral w-[20%]" type="submit" (click)="onClickCancel()"> 
                 <span>Cancelar</span>
               </button>
             </div>
@@ -117,7 +117,7 @@
             </th>
             <td>{{ entry.transactionDate | date:'dd/MM/yyyy':'pt-BR' }}</td>
             <td>{{ entry.description }}</td>
-            <td>{{ entry.value | currency:'BRL'}}</td>
+            <td>{{ entry.value | currency:'BRL':'symbol':'1.2-2':'pt'}}</td>
             <td [ngSwitch]="entry.type">
               <div class="badge badge-success gap-2 justify-end" *ngSwitchCase="TransactionTypeEnum.Income">
                 Entrada
