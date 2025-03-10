@@ -30,6 +30,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   isEditMode: boolean = false;
   isConfirmationDialogOpen: boolean = false;
   confirmationDialogMessage: string = '';
+  showSuccessAlert: boolean = false;
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
