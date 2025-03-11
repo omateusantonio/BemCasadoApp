@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RegistrationContentBoxComponent } from "../../components/registration-content-box/registration-content-box.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, ViewportScroller } from '@angular/common';
@@ -10,6 +10,7 @@ import { EnumService } from '../../shared/services/enum.service';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { BrazilianCurrencyToFloatPipe } from '../../shared/pipes/brazilian-currency-to-float.pipe';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-financial-entry-registration',
@@ -37,7 +38,8 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     private enumService: EnumService,
     private dateFormat: DateFormatPipe,
     private brazilianCurrencyToFloat: BrazilianCurrencyToFloatPipe,
-    private scroller: ViewportScroller) {
+    private scroller: ViewportScroller,
+    private toast: ToastService) {
 
     this.financialEntryForm = this._createForm();
   }
@@ -53,16 +55,21 @@ export class FinancialEntryRegistrationComponent implements OnInit {
       const newEntry = this._getValuesFromForm();
       this._createNewEntry(newEntry);
       this._resetForm();
+    } else {
+      this.financialEntryForm.markAllAsTouched();
+      this.toast.showWarning("Por favor, preencha todos os campos corretamente.");
     }
   }
 
-  onSubmitUpdate(): void {
+  onSubmitUpdate(): void { // TODO: refactor this abomination of function
     if (this.financialEntryForm.valid) {
       const updatedEntry = this._getValuesFromForm();
       this._updateEntry(updatedEntry);
       this._resetForm();
       this.isEditMode = false;
-      this._selectedEntryId = null;
+    } else {
+      this.financialEntryForm.markAllAsTouched();
+      this.toast.showWarning("Por favor, preencha todos os campos corretamente.");
     }
   }
   
@@ -157,23 +164,36 @@ export class FinancialEntryRegistrationComponent implements OnInit {
 
   private _createNewEntry(entry: IFinancialEntry): void {
     this.financialEntryService.addEntry(entry)
-                              .subscribe(response => this.entriesList.push(response));
+                              .subscribe({
+                                next: response => this.entriesList.push(response),
+                                error: () => this.toast.showError("Ocorreu um erro ao criar a nova transação."),
+                                complete: () => this.toast.showSuccess("Transação criada com sucesso!")
+                              });
   }
 
   private _updateEntry(updatedEntry: IFinancialEntry): void {
     this.financialEntryService.updateEntry(updatedEntry)
-                              .subscribe(() => {
-                                const entryIndex = this.entriesList.findIndex(entry => entry.id === this._selectedEntryId);
-                                this.entriesList[entryIndex] = updatedEntry;
+                              .subscribe({
+                                next: () => {
+                                  const entryIndex = this.entriesList.findIndex(entry => entry.id === this._selectedEntryId);
+                                  this.entriesList[entryIndex] = updatedEntry;
+                                  this._selectedEntryId = null;
+                                },
+                                error: () => this.toast.showError("Ocorreu um erro ao atualizar a transação selecionada."),
+                                complete: () => this.toast.showSuccess("Transação atualizada com sucesso!")
                               });
   }
 
   private _deleteEntry(entryId: number): void {
     this.financialEntryService.deleteEntry(this._entryToDeleteId!)
-                              .subscribe(() => {
-                                this.entriesList = this.entriesList.filter(entry => entry.id !== this._entryToDeleteId);
-                                this.isConfirmationDialogOpen = false;
-                                this._entryToDeleteId = null;
+                              .subscribe({
+                                next: () => {
+                                  this.entriesList = this.entriesList.filter(entry => entry.id !== entryId);
+                                  this.isConfirmationDialogOpen = false;
+                                  this._entryToDeleteId = null;
+                                },
+                                error: () => this.toast.showError("Ocorreu um erro ao excluir a transação selecionada."),
+                                complete: () => this.toast.showSuccess("Transação excluída com sucesso!")
                               });
   }
 

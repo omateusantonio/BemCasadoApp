@@ -11,7 +11,7 @@ export class ToastService {
   private _activeToastRef: any = null;
   
   open(data: IToastData): void {
-    if (this._activeToastRef) this.close();
+    if (this._activeToastRef) this._close();
     
     const toastData: IToastData = { 
       type: 'info',
@@ -32,7 +32,7 @@ export class ToastService {
     this._activeToastRef = toastComponentRef;
     
     const handleToastDone = () => {
-      this.close();
+      this._close();
       window.removeEventListener('toast:done', handleToastDone);
     };
     
@@ -41,13 +41,13 @@ export class ToastService {
     if (toastData.duration && toastData.duration > 0) {
       setTimeout(() => {
         if (this._activeToastRef === toastComponentRef) {
-          this.close();
+          this._close();
         }
       }, toastData.duration + 300);
     }
   }
   
-  close(): void {
+  private _close(): void {
     if (this._activeToastRef) {
       this._applicationRef.detachView(this._activeToastRef.hostView);
       
@@ -59,5 +59,21 @@ export class ToastService {
       this._activeToastRef.destroy();
       this._activeToastRef = null;
     }
+  }
+
+  showSuccess(message: string): void {
+    this.open({ type: 'success', message });
+  }
+
+  showError(message: string): void {
+    this.open({ type: 'error', message });
+  }
+
+  showWarning(message: string): void {
+    this.open({ type: 'warning', message });
+  }
+
+  showInfo(message: string): void {
+    this.open({ type: 'info', message });
   }
 }
