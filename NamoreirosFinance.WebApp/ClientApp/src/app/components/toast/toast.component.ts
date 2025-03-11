@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { ToastData } from '../../shared/interfaces/toast-data';
+import { IToastData } from '../../shared/interfaces/toast-data.interface';
 import { animate, AnimationBuilder, AnimationFactory, AnimationPlayer, style } from '@angular/animations';
 
 @Component({
@@ -11,42 +11,38 @@ import { animate, AnimationBuilder, AnimationFactory, AnimationPlayer, style } f
   styleUrl: './toast.component.css'
 })
 export class ToastComponent implements OnInit, OnDestroy {
-  @Input() data: ToastData = { 
+  @Input() data: IToastData = { 
     message: '',
     type: 'info',
     duration: 3000
   };
   
-  private animationBuilder = inject(AnimationBuilder);
-  private player?: AnimationPlayer;
-  private timeoutId?: number;
+  private _animationBuilder = inject(AnimationBuilder);
+  private _player?: AnimationPlayer;
+  private _timeoutId?: number;
   
   ngOnInit(): void {
-    this.timeoutId = window.setTimeout(() => {
-      this.fadeOut();
+    this._timeoutId = window.setTimeout(() => {
+      this._fadeOut();
+      
     }, this.data.duration);
   }
   
   ngOnDestroy(): void {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
-    
-    if (this.player) {
-      this.player.destroy();
-    }
+    if (this._timeoutId) clearTimeout(this._timeoutId);
+    if (this._player) this._player.destroy();
   }
   
-  private fadeOut(): void {
-    const factory: AnimationFactory = this.animationBuilder.build([
+  private _fadeOut(): void {
+    const factory: AnimationFactory = this._animationBuilder.build([
       style({ opacity: 1 }),
       animate('300ms ease-out', style({ opacity: 0, transform: 'translate(-50%, 20px)' }))
     ]);
     
-    this.player = factory.create(document.querySelector('.alert'));
-    this.player.play();
+    this._player = factory.create(document.querySelector('.alert'));
+    this._player.play();
     
-    this.player.onDone(() => {
+    this._player.onDone(() => {
       const customEvent = new CustomEvent('toast:done');
       window.dispatchEvent(customEvent);
     });

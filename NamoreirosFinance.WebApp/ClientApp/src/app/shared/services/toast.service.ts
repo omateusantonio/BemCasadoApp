@@ -1,37 +1,35 @@
 import { Injectable, createComponent, ApplicationRef, EnvironmentInjector, inject } from '@angular/core';
-import { ToastData } from '../interfaces/toast-data';
+import { IToastData } from '../interfaces/toast-data.interface';
 import { ToastComponent } from '../../components/toast/toast.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToastService {
-  private applicationRef = inject(ApplicationRef);
-  private injector = inject(EnvironmentInjector);
-  private activeToastRef: any = null;
+  private _applicationRef = inject(ApplicationRef);
+  private _injector = inject(EnvironmentInjector);
+  private _activeToastRef: any = null;
   
-  open(data: ToastData): void {
-    if (this.activeToastRef) {
-      this.close();
-    }
+  open(data: IToastData): void {
+    if (this._activeToastRef) this.close();
     
-    const toastData: ToastData = { 
+    const toastData: IToastData = { 
       type: 'info',
       duration: 3000,
       ...data
     };
     
     const toastComponentRef = createComponent(ToastComponent, {
-      environmentInjector: this.injector
+      environmentInjector: this._injector
     });
     
     toastComponentRef.instance.data = toastData;
     
     document.body.appendChild(toastComponentRef.location.nativeElement);
     
-    this.applicationRef.attachView(toastComponentRef.hostView);
+    this._applicationRef.attachView(toastComponentRef.hostView);
     
-    this.activeToastRef = toastComponentRef;
+    this._activeToastRef = toastComponentRef;
     
     const handleToastDone = () => {
       this.close();
@@ -42,7 +40,7 @@ export class ToastService {
     
     if (toastData.duration && toastData.duration > 0) {
       setTimeout(() => {
-        if (this.activeToastRef === toastComponentRef) {
+        if (this._activeToastRef === toastComponentRef) {
           this.close();
         }
       }, toastData.duration + 300);
@@ -50,16 +48,16 @@ export class ToastService {
   }
   
   close(): void {
-    if (this.activeToastRef) {
-      this.applicationRef.detachView(this.activeToastRef.hostView);
+    if (this._activeToastRef) {
+      this._applicationRef.detachView(this._activeToastRef.hostView);
       
-      const element = this.activeToastRef.location.nativeElement;
+      const element = this._activeToastRef.location.nativeElement;
       if (element.parentNode) {
         element.parentNode.removeChild(element);
       }
       
-      this.activeToastRef.destroy();
-      this.activeToastRef = null;
+      this._activeToastRef.destroy();
+      this._activeToastRef = null;
     }
   }
 }
