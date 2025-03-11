@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RegistrationContentBoxComponent } from "../../components/registration-content-box/registration-content-box.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, ViewportScroller } from '@angular/common';
@@ -10,6 +10,7 @@ import { EnumService } from '../../shared/services/enum.service';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { BrazilianCurrencyToFloatPipe } from '../../shared/pipes/brazilian-currency-to-float.pipe';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-financial-entry-registration',
@@ -31,6 +32,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   isConfirmationDialogOpen: boolean = false;
   confirmationDialogMessage: string = '';
   showSuccessAlert: boolean = false;
+  toastService = inject(ToastService);
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
@@ -40,6 +42,14 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     private scroller: ViewportScroller) {
 
     this.financialEntryForm = this._createForm();
+  }
+
+  showSuccessToast(): void {
+    this.toastService.open({
+      message: 'Warning: This action might have consequences',
+      type: 'warning',
+      duration: 3000
+    });
   }
 
   ngOnInit(): void {

@@ -1,0 +1,10 @@
+<div 
+      class="alert fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 shadow-lg max-w-md w-full"
+      [ngClass]="{
+        'alert-info': data.type === 'info',
+        'alert-success': data.type === 'success',
+        'alert-warning': data.type === 'warning',
+        'alert-error': data.type === 'error'
+      }">
+      <span>{{ data.message }}</span>
+</div>

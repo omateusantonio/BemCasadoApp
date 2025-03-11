@@ -76,6 +76,9 @@
             <button class="btn w-full" type="submit" (click)="onSubmit()">
               <span>Cadastrar transação</span>
             </button>
+            <button class="btn w-full" type="submit" (click)="showSuccessToast()">
+              <span>Toast</span>
+            </button>
           } @else {
             <div class="w-full flex justify-between gap-4">
               <button class="btn flex-1" type="submit" (click)="onSubmitUpdate()">
