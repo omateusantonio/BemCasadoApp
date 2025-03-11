@@ -21,7 +21,6 @@
             <p 
               *ngIf="financialEntryForm.get('description')?.invalid && financialEntryForm.get('description')?.touched" 
               class="text-error text-sm mt-1">É obrigatório informar a descrição da transação</p> 
-              <!-- change this conditional to ng-template instead of using directly a p tag -->
           </label>
           <label class="form-control w-full pb-4">
               <div class="label">

@@ -1,0 +1,21 @@
+<div 
+      class="alert fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 shadow-lg max-w-md w-full"
+      [ngClass]="{
+        'alert-info': data.type === 'info',
+        'alert-success': data.type === 'success',
+        'alert-warning': data.type === 'warning',
+        'alert-error': data.type === 'error'
+      }">
+      <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      class="h-6 w-6 shrink-0 stroke-current">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        [attr.d]="getSvgPath()"/>
+      </svg>
+      <span>{{ data.message }}</span>
+</div>
