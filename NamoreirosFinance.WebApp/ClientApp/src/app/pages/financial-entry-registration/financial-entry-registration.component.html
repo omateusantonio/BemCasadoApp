@@ -140,7 +140,9 @@
               </div>
             </td>
           </tr>
-          <tr *ngFor="let emptyItem of emptyObjects" class="h-12"></tr>
+          @for (placeholderRow of getPlaceholderEmptyRows(); track placeholderRow) {
+            <tr class="h-12"></tr>
+          }
         </tbody>
         <tfoot>
           <tr>

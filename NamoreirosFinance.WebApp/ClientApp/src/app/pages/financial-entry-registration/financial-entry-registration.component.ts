@@ -49,7 +49,6 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this._defineEnums();
     await this._getAllEntries();
-    this._fillTableWithEmptyPlaceholders();
     this._setupDateMaskListener();
   }
 
@@ -116,7 +115,6 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   onConfirmDelete(): void {
     if (this._entryToDeleteId || this._entryToDeleteId === 0) {
       this._deleteEntry(this._entryToDeleteId);
-      this._updatePlaceholderRows();
     };
   }
   
@@ -176,8 +174,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this.financialEntryService.addEntry(entry)
                               .subscribe({
                                 next: response => {
-                                  this.entriesList.push(response);
-                                  this._updatePlaceholderRows();
+                                  if (this.entriesList.length < 10) this.entriesList.push(response);
                                 },
                                 error: () => this.toast.showError("Ocorreu um erro ao criar a nova transação."),
                                 complete: () => this.toast.showSuccess("Transação criada com sucesso!")
@@ -203,8 +200,8 @@ export class FinancialEntryRegistrationComponent implements OnInit {
                                 next: () => {
                                   this.entriesList = this.entriesList.filter(entry => entry.id !== entryId);
                                   this.isConfirmationDialogOpen = false;
-                                  this._updatePlaceholderRows();
                                   this._entryToDeleteId = null;
+                                  if (this.entriesList.length < 10) this._getAllEntries();
                                 },
                                 error: () => this.toast.showError("Ocorreu um erro ao excluir a transação selecionada."),
                                 complete: () => this.toast.showSuccess("Transação excluída com sucesso!")
@@ -267,20 +264,8 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this.scroller.scrollToAnchor("financialEntryFormContainerId");
   }
 
-  private _fillTableWithEmptyPlaceholders(maxRows: number = 10): void {
-    const entriesListHasLessThanMaxItems = this.entriesList.length < maxRows;
-
-    if (entriesListHasLessThanMaxItems) {
-      const totalEntries = this.entriesList.length;
-      const emptyEntriesToFill = maxRows - totalEntries;
-
-      for (let i = 0; i < emptyEntriesToFill; i++) this.emptyObjects.push({}); //TODO: update the logic to pop items exceding the maxRows
-    } else {
-      this.emptyObjects = [];
-    }
-  }
-
-  private _updatePlaceholderRows(): void {
-    this._fillTableWithEmptyPlaceholders();
+  getPlaceholderEmptyRows(maxRows: number = 10): number[] {
+    const  numberOfEmptyRows = Math.max(0, maxRows - this.entriesList.length);
+    return Array(numberOfEmptyRows).fill(0).map((_, index) => index);
   }
 }
