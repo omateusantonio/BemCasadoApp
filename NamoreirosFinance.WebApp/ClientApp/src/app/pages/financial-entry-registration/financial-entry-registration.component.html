@@ -140,7 +140,21 @@
               </div>
             </td>
           </tr>
+          <tr *ngFor="let emptyItem of emptyObjects" class="h-12"></tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6" class="py-2">
+              <div class="flex justify-center">
+                <div class="join">
+                  <button class="join-item btn">«</button>
+                  <button class="join-item btn w-32">Página 1</button>
+                  <button class="join-item btn">»</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </app-registration-content-box>

@@ -11,6 +11,7 @@ import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { BrazilianCurrencyToFloatPipe } from '../../shared/pipes/brazilian-currency-to-float.pipe';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from '../../shared/services/toast.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-financial-entry-registration',
@@ -27,11 +28,12 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   financialEntryForm: FormGroup;
   entriesList: IFinancialEntry[] = [];
   transactionTypes: IEnumOption[] = [];
-  TransactionTypeEnum = TransactionType;
+  protected TransactionTypeEnum = TransactionType;
   isEditMode: boolean = false;
   isConfirmationDialogOpen: boolean = false;
-  confirmationDialogMessage: string = '';
+  confirmationDialogMessage: string = "";
   showSuccessAlert: boolean = false;
+  emptyObjects: {}[] = [];
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
@@ -44,9 +46,10 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this.financialEntryForm = this._createForm();
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this._defineEnums();
-    this._getAllEntries();
+    await this._getAllEntries();
+    this._fillTableWithEmptyPlaceholders();
     this._setupDateMaskListener();
   }
 
@@ -111,7 +114,10 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   }
 
   onConfirmDelete(): void {
-    if (this._entryToDeleteId || this._entryToDeleteId === 0) this._deleteEntry(this._entryToDeleteId);
+    if (this._entryToDeleteId || this._entryToDeleteId === 0) {
+      this._deleteEntry(this._entryToDeleteId);
+      this._updatePlaceholderRows();
+    };
   }
   
   onCancelDelete(): void {
@@ -157,15 +163,22 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     };
   }
 
-  private _getAllEntries(): void {
-    this.financialEntryService.getEntries()
-                              .subscribe((response) => this.entriesList = response);
+  private async _getAllEntries(): Promise<void> {
+    try {
+      this.entriesList = await firstValueFrom(this.financialEntryService.getEntries());
+    } catch (error) {
+      this.toast.showError("Ocorreu um erro ao buscar as transações.");
+      this.entriesList = [];
+    }
   }
 
   private _createNewEntry(entry: IFinancialEntry): void {
     this.financialEntryService.addEntry(entry)
                               .subscribe({
-                                next: response => this.entriesList.push(response),
+                                next: response => {
+                                  this.entriesList.push(response);
+                                  this._updatePlaceholderRows();
+                                },
                                 error: () => this.toast.showError("Ocorreu um erro ao criar a nova transação."),
                                 complete: () => this.toast.showSuccess("Transação criada com sucesso!")
                               });
@@ -190,6 +203,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
                                 next: () => {
                                   this.entriesList = this.entriesList.filter(entry => entry.id !== entryId);
                                   this.isConfirmationDialogOpen = false;
+                                  this._updatePlaceholderRows();
                                   this._entryToDeleteId = null;
                                 },
                                 error: () => this.toast.showError("Ocorreu um erro ao excluir a transação selecionada."),
@@ -251,5 +265,22 @@ export class FinancialEntryRegistrationComponent implements OnInit {
 
   private _scrollToForm(): void {
     this.scroller.scrollToAnchor("financialEntryFormContainerId");
+  }
+
+  private _fillTableWithEmptyPlaceholders(maxRows: number = 10): void {
+    const entriesListHasLessThanMaxItems = this.entriesList.length < maxRows;
+
+    if (entriesListHasLessThanMaxItems) {
+      const totalEntries = this.entriesList.length;
+      const emptyEntriesToFill = maxRows - totalEntries;
+
+      for (let i = 0; i < emptyEntriesToFill; i++) this.emptyObjects.push({}); //TODO: update the logic to pop items exceding the maxRows
+    } else {
+      this.emptyObjects = [];
+    }
+  }
+
+  private _updatePlaceholderRows(): void {
+    this._fillTableWithEmptyPlaceholders();
   }
 }
