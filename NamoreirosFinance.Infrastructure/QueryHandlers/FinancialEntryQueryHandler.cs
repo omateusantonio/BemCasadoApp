@@ -9,6 +9,11 @@ namespace NamoreirosFinance.Application.Common.Request.Handlers
     {
         public IQueryable<FinancialEntry> ApplyRequest(IQueryable<FinancialEntry> query, QueryRequest request)
         {
+            if (request.Take < 0 || request.Skip < 0)
+            {
+                throw new ArgumentException("Invalid pagination parameters - Take and Skip must be greater than zero");
+            }
+
             if (request.HasFilter)
             {
                 query = ApplyFilteringQuery(request, query);
@@ -23,17 +28,17 @@ namespace NamoreirosFinance.Application.Common.Request.Handlers
                 query = query.OrderBy(x => x.Id);
             }
 
-            if (request.HasPagination)
-            {
-                query = ApplyPaginationQuery(request, query);
-            }
-
             return query;
         }
 
         public async Task<PagedResult<FinancialEntry>> GetPagedResult(IQueryable<FinancialEntry> query, QueryRequest request)
         {
             var totalCount = await query.CountAsync();
+
+            if (request.HasPagination)
+            {
+                query = ApplyPaginationQuery(request, query);
+            }
 
             var items = await query.ToListAsync();
 
@@ -48,10 +53,6 @@ namespace NamoreirosFinance.Application.Common.Request.Handlers
 
         private IQueryable<FinancialEntry> ApplyPaginationQuery(QueryRequest request, IQueryable<FinancialEntry> query)
         {
-            if (request.Take < 0 || request.Skip < 0)
-            {
-                throw new ArgumentException("Invalid pagination parameters - Take and Skip must be greater than zero");
-            }
 
             return query.Skip(request.Skip).Take(request.Take);
         }
