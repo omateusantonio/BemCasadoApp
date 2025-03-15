@@ -1,6 +1,6 @@
 ﻿using NamoreirosFinance.Application.Interfaces;
 using NamoreirosFinance.Domain.Core.Entities.Transaction;
-using NamoreirosFinance.Domain.Core.Repositories;
+using NamoreirosFinance.Domain.Core.Interfaces.Repositories;
 
 namespace NamoreirosFinance.Application.Services
 {

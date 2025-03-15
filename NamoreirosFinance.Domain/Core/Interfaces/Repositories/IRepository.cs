@@ -1,4 +1,4 @@
-﻿namespace NamoreirosFinance.Domain.Core.Repositories
+﻿namespace NamoreirosFinance.Domain.Core.Interfaces.Repositories
 {
     public interface IRepository<T> where T : class
     {

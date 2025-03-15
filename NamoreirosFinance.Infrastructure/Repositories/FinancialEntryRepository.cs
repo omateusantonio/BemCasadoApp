@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NamoreirosFinance.Domain.Core.Entities.Transaction;
-using NamoreirosFinance.Domain.Core.Repositories;
+using NamoreirosFinance.Domain.Core.Interfaces.Repositories;
 using NamoreirosFinance.Infrastructure.Context;
 
 namespace NamoreirosFinance.Infrastructure.Repositories
