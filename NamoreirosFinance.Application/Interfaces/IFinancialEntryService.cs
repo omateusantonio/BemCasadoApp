@@ -1,4 +1,5 @@
-﻿using NamoreirosFinance.Domain.Core.Entities.Transaction;
+﻿using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
+using NamoreirosFinance.Domain.Core.Models;
 
 namespace NamoreirosFinance.Application.Interfaces
 {
@@ -9,5 +10,6 @@ namespace NamoreirosFinance.Application.Interfaces
         Task<List<FinancialEntry>> GetAll();
         Task Update(FinancialEntry financialEntry);
         Task Delete(FinancialEntry financialEntry);
+        Task<PagedResult<FinancialEntry>> GetPaged(QueryRequest request);
     }
 }

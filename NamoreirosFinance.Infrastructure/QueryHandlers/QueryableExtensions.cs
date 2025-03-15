@@ -1,4 +1,7 @@
-﻿namespace NamoreirosFinance.Application.Common.Request
+﻿using NamoreirosFinance.Domain.Core.Interfaces;
+using NamoreirosFinance.Domain.Core.Models;
+
+namespace NamoreirosFinance.Infrastructure.QueryHandlers
 {
     public static class QueryableExtensions
     {

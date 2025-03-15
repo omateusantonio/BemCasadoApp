@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NamoreirosFinance.Domain.Core.Entities.Transaction;
+using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
+using NamoreirosFinance.Domain.Core.Interfaces;
+using NamoreirosFinance.Domain.Core.Models;
 
-namespace NamoreirosFinance.Application.Common.Request.Handlers
+namespace NamoreirosFinance.Infrastructure.QueryHandlers
 {
     public class FinancialEntryQueryHandler : IQueryRequestHandler<FinancialEntry>
     {
@@ -15,7 +17,7 @@ namespace NamoreirosFinance.Application.Common.Request.Handlers
             if (request.HasOrdering)
             {
                 query = ApplyOrderingQuery(request, query);
-            } 
+            }
             else
             {
                 query = query.OrderBy(x => x.Id);
@@ -31,14 +33,11 @@ namespace NamoreirosFinance.Application.Common.Request.Handlers
 
         public async Task<PagedResult<FinancialEntry>> GetPagedResult(IQueryable<FinancialEntry> query, QueryRequest request)
         {
-            var totalCount = await query.CountAsync();
-
             var items = await query.ToListAsync();
 
             return new PagedResult<FinancialEntry>
             {
                 PaginatedItems = items,
-                TotalItems = totalCount,
                 Skip = request.Skip,
                 Take = request.Take
             };

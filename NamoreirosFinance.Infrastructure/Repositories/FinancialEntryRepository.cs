@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NamoreirosFinance.Domain.Core.Entities.Transaction;
+using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
+using NamoreirosFinance.Domain.Core.Interfaces;
 using NamoreirosFinance.Domain.Core.Interfaces.Repositories;
+using NamoreirosFinance.Domain.Core.Models;
 using NamoreirosFinance.Infrastructure.Context;
 
 namespace NamoreirosFinance.Infrastructure.Repositories
@@ -8,9 +10,13 @@ namespace NamoreirosFinance.Infrastructure.Repositories
     public class FinancialEntryRepository : IFinancialEntryRepository
     {
         private readonly AppDbContext _context;
-        public FinancialEntryRepository(AppDbContext context)
+        private readonly IQueryRequestHandler<FinancialEntry> _queryHandler;
+
+        public FinancialEntryRepository(AppDbContext context,
+                                        IQueryRequestHandler<FinancialEntry> queryHandler)
         {
             _context = context;
+            _queryHandler = queryHandler;
         }
 
         public async Task Add(FinancialEntry entry)
@@ -43,5 +49,12 @@ namespace NamoreirosFinance.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public Task<PagedResult<FinancialEntry>> GetPaged(QueryRequest request)
+        {
+            var query = _context.FinancialEntries.AsNoTracking();
+            query = _queryHandler.ApplyRequest(query, request);
+
+            return _queryHandler.GetPagedResult(query, request);
+        }
     }
 }

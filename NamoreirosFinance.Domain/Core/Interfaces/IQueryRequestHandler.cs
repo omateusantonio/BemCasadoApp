@@ -1,4 +1,6 @@
-﻿namespace NamoreirosFinance.Application.Common.Request
+﻿using NamoreirosFinance.Domain.Core.Models;
+
+namespace NamoreirosFinance.Domain.Core.Interfaces
 {
     public interface IQueryRequestHandler<T> where T : class
     {

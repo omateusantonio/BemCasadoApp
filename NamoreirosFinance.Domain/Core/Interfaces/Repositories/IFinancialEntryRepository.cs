@@ -1,4 +1,4 @@
-﻿using NamoreirosFinance.Domain.Core.Entities.Transaction;
+﻿using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
 
 namespace NamoreirosFinance.Domain.Core.Interfaces.Repositories
 {

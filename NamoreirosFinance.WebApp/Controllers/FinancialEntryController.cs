@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NamoreirosFinance.Application.Interfaces;
-using NamoreirosFinance.Domain.Core.Entities.Transaction;
+using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
+using NamoreirosFinance.Domain.Core.Models;
 
 
 namespace NamoreirosFinance.WebApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")] 
     [ApiController]
     public class FinancialEntryController : ControllerBase
     {
@@ -15,7 +16,7 @@ namespace NamoreirosFinance.WebApp.Controllers
             _financialEntryService = financialEntryService;
         }
 
-        [HttpGet("v1")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var entries = await _financialEntryService.GetAll();
@@ -28,7 +29,23 @@ namespace NamoreirosFinance.WebApp.Controllers
             return Ok(entries);
         }
 
-        [HttpGet("v1/{id}")]
+        [HttpPost("search")]
+        public async Task<IActionResult> GetPaged([FromQuery] QueryRequest request)
+        {
+            var entries = await _financialEntryService.GetPaged(request);
+
+            if (!entries.PaginatedItems.Any())
+            {
+                return NoContent();
+            }
+
+            HttpContext.Response.Headers.Append("X-Skip", entries.Skip.ToString());
+            HttpContext.Response.Headers.Append("X-Take", entries.Take.ToString());
+
+            return Ok(entries.PaginatedItems);
+        }
+
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             if (id <= 0)
@@ -46,7 +63,7 @@ namespace NamoreirosFinance.WebApp.Controllers
             return Ok(entry);
         }
 
-        [HttpPost("v1")]
+        [HttpPost]
         public async Task<IActionResult> Add([FromBody] FinancialEntry financialEntry)
         {
             if (financialEntry.Id != 0)
@@ -58,7 +75,7 @@ namespace NamoreirosFinance.WebApp.Controllers
             return Created(financialEntry.Id.ToString(), financialEntry);
         }
 
-        [HttpPatch("v1/{id}")]
+        [HttpPatch("{id}")]
         public async Task<IActionResult> Update([FromBody] FinancialEntry financialEntry, int id)
         {
             if (id <= 0)
@@ -75,7 +92,7 @@ namespace NamoreirosFinance.WebApp.Controllers
             return NoContent();
         }
 
-        [HttpDelete("v1/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             if (id <= 0)
