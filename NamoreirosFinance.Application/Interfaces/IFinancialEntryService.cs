@@ -1,4 +1,5 @@
-﻿using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
+﻿using NamoreirosFinance.Application.Common.Request;
+using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
 using NamoreirosFinance.Domain.Core.Models;
 
 namespace NamoreirosFinance.Application.Interfaces

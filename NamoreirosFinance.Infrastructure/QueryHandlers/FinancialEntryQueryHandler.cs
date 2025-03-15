@@ -3,7 +3,7 @@ using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
 using NamoreirosFinance.Domain.Core.Interfaces;
 using NamoreirosFinance.Domain.Core.Models;
 
-namespace NamoreirosFinance.Infrastructure.QueryHandlers
+namespace NamoreirosFinance.Application.Common.Request.Handlers
 {
     public class FinancialEntryQueryHandler : IQueryRequestHandler<FinancialEntry>
     {
@@ -17,7 +17,7 @@ namespace NamoreirosFinance.Infrastructure.QueryHandlers
             if (request.HasOrdering)
             {
                 query = ApplyOrderingQuery(request, query);
-            }
+            } 
             else
             {
                 query = query.OrderBy(x => x.Id);
@@ -33,11 +33,14 @@ namespace NamoreirosFinance.Infrastructure.QueryHandlers
 
         public async Task<PagedResult<FinancialEntry>> GetPagedResult(IQueryable<FinancialEntry> query, QueryRequest request)
         {
+            var totalCount = await query.CountAsync();
+
             var items = await query.ToListAsync();
 
             return new PagedResult<FinancialEntry>
             {
                 PaginatedItems = items,
+                TotalItems = totalCount,
                 Skip = request.Skip,
                 Take = request.Take
             };

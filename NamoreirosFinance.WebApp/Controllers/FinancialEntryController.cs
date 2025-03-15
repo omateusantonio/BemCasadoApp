@@ -39,6 +39,7 @@ namespace NamoreirosFinance.WebApp.Controllers
                 return NoContent();
             }
 
+            HttpContext.Response.Headers.Append("X-Total-Count", entries.TotalItems.ToString());
             HttpContext.Response.Headers.Append("X-Skip", entries.Skip.ToString());
             HttpContext.Response.Headers.Append("X-Take", entries.Take.ToString());
 

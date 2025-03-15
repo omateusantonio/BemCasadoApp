@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NamoreirosFinance.Application.Common.Request;
 using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
 using NamoreirosFinance.Domain.Core.Interfaces;
 using NamoreirosFinance.Domain.Core.Interfaces.Repositories;

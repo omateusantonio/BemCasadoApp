@@ -1,4 +1,5 @@
-﻿using NamoreirosFinance.Domain.Core.Models;
+﻿using NamoreirosFinance.Application.Common.Request;
+using NamoreirosFinance.Domain.Core.Models;
 
 namespace NamoreirosFinance.Domain.Core.Interfaces.Repositories
 {

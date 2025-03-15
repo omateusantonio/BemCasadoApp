@@ -1,4 +1,5 @@
-﻿using NamoreirosFinance.Domain.Core.Interfaces;
+﻿using NamoreirosFinance.Application.Common.Request;
+using NamoreirosFinance.Domain.Core.Interfaces;
 using NamoreirosFinance.Domain.Core.Models;
 
 namespace NamoreirosFinance.Infrastructure.QueryHandlers
