@@ -12,6 +12,7 @@ import { BrazilianCurrencyToFloatPipe } from '../../shared/pipes/brazilian-curre
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from '../../shared/services/toast.service';
 import { firstValueFrom } from 'rxjs';
+import { QueryRequest } from '../../shared/models/query-request';
 
 @Component({
   selector: 'app-financial-entry-registration',
@@ -33,7 +34,6 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   isConfirmationDialogOpen: boolean = false;
   confirmationDialogMessage: string = "";
   showSuccessAlert: boolean = false;
-  emptyObjects: {}[] = [];
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
@@ -47,8 +47,10 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    const request = new QueryRequest();
     this._defineEnums();
-    await this._getAllEntries();
+    // this._getAllEntries();
+    await this._getPaginatedEntries(request);
     this._setupDateMaskListener();
   }
 
@@ -168,6 +170,21 @@ export class FinancialEntryRegistrationComponent implements OnInit {
       this.toast.showError("Ocorreu um erro ao buscar as transações.");
       this.entriesList = [];
     }
+  }
+
+  private _getPaginatedEntries(request: QueryRequest): void {
+    this.financialEntryService.getPaginatedEntries(request)
+                              .subscribe({
+                                next: response => {
+                                  debugger
+                                  response.headers.keys()
+                                  this.entriesList = response;
+                                },
+                                error: () => {
+                                  this.toast.showError("Ocorreu um erro ao buscar as transações.");
+                                  this.entriesList = [];
+                                }
+                              });
   }
 
   private _createNewEntry(entry: IFinancialEntry): void {
