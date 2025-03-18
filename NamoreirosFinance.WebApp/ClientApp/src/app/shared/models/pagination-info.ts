@@ -5,17 +5,18 @@ export class PaginationInfo {
     private _totalPages: number = 0;
     private _currentPage: number = 1;
 
-    constructor(init?: Partial<PaginationInfo>) {
-        Object.assign(this, init);
+    get skip(): number { return this._skip; }
+    get take(): number { return this._take; }
+    get totalItems(): number { return this._totalItems; }
+    get totalPages(): number { return this._totalPages; }
+    get currentPage(): number { return this._currentPage; }
+
+    set totalItems(value: number) {
+        this._totalItems = value;
+        this.updateTotalPages();
     }
 
-    skip: number = 0;
-    take: number = 10;
-    totalItems: number = 0;
-    totalPages: number = 0;
-    currentPage: number = 1;
-
-    private _calculateTotalPages (): void {
+    updateTotalPages (): void {
         const totalPages = Math.ceil(this._totalItems / this._take);
         this._totalPages = totalPages > 0 ? totalPages : 1;
     }
@@ -24,5 +25,12 @@ export class PaginationInfo {
         this._skip = skip;
         this._take = take;
         this._totalItems = totalItems;
+        this.updateTotalPages();
+    }
+
+    updateCurrentPage(currentPage: number): void {
+        if (currentPage < 1) throw new Error('Current page cannot be less than 1');
+        if (currentPage > this._totalPages) throw new Error('Current page cannot be greater than total pages');
+        this._currentPage = currentPage;
     }
 }

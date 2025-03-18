@@ -49,11 +49,10 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this.financialEntryForm = this._createForm();
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     const request = new QueryRequest();
     this._defineEnums();
-    // this._getAllEntries();
-    await this._getPaginatedEntries(request);
+    this._getPaginatedEntries(request);
     this._setupDateMaskListener();
   }
 
@@ -195,6 +194,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
                               .subscribe({
                                 next: response => {
                                   if (this.entriesList.length < 10) this.entriesList.push(response);
+                                  if (this.entriesList.length === 10) this.paginationInfo.totalItems += 1;
                                 },
                                 error: () => this.toast.showError("Ocorreu um erro ao criar a nova transação."),
                                 complete: () => this.toast.showSuccess("Transação criada com sucesso!")
@@ -221,7 +221,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
                                   this.entriesList = this.entriesList.filter(entry => entry.id !== entryId);
                                   this.isConfirmationDialogOpen = false;
                                   this._entryToDeleteId = null;
-                                  if (this.entriesList.length < 10) this._getAllEntries();
+                                  if (this.entriesList.length < 10) this._getPaginatedEntries(new QueryRequest());
                                 },
                                 error: () => this.toast.showError("Ocorreu um erro ao excluir a transação selecionada."),
                                 complete: () => this.toast.showSuccess("Transação excluída com sucesso!")
@@ -293,9 +293,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     const take = parseInt(response.headers.get("x-take")!);
     const totalCount = parseInt(response.headers.get("x-total-count")!);
 
-    this.paginationInfo.skip = skip;
-    this.paginationInfo.take = take;
-    this.paginationInfo.totalItems = totalCount;
+    this.paginationInfo.updatePaginationInfo(skip, take, totalCount);
 
     console.log(this.paginationInfo);
   }
