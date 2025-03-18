@@ -11,8 +11,10 @@ import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { BrazilianCurrencyToFloatPipe } from '../../shared/pipes/brazilian-currency-to-float.pipe';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from '../../shared/services/toast.service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { QueryRequest } from '../../shared/models/query-request';
+import { HttpResponse } from '@angular/common/http';
+import { PaginationInfo } from '../../shared/models/pagination-info';
 
 @Component({
   selector: 'app-financial-entry-registration',
@@ -34,6 +36,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   isConfirmationDialogOpen: boolean = false;
   confirmationDialogMessage: string = "";
   showSuccessAlert: boolean = false;
+  protected paginationInfo: PaginationInfo = new PaginationInfo();
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
@@ -165,10 +168,11 @@ export class FinancialEntryRegistrationComponent implements OnInit {
 
   private async _getAllEntries(): Promise<void> {
     try {
-      this.entriesList = await firstValueFrom(this.financialEntryService.getEntries());
+      const allEntries = await firstValueFrom(this.financialEntryService.getEntries());
+      this._setEntriesListData(allEntries);
     } catch (error) {
       this.toast.showError("Ocorreu um erro ao buscar as transações.");
-      this.entriesList = [];
+      this._setEntriesListData();
     }
   }
 
@@ -176,13 +180,12 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this.financialEntryService.getPaginatedEntries(request)
                               .subscribe({
                                 next: response => {
-                                  debugger
-                                  response.headers.keys()
-                                  this.entriesList = response;
+                                  this._setupPaginationInfo(response);
+                                  this._setEntriesListData(response.body!);
                                 },
                                 error: () => {
                                   this.toast.showError("Ocorreu um erro ao buscar as transações.");
-                                  this.entriesList = [];
+                                  this._setEntriesListData();
                                 }
                               });
   }
@@ -279,6 +282,22 @@ export class FinancialEntryRegistrationComponent implements OnInit {
 
   private _scrollToForm(): void {
     this.scroller.scrollToAnchor("financialEntryFormContainerId");
+  }
+
+  private _setEntriesListData(entries?: IFinancialEntry[]): void {
+    this.entriesList = entries || [];
+  }
+
+  private _setupPaginationInfo(response: HttpResponse<IFinancialEntry[]>): void {
+    const skip = parseInt(response.headers.get("x-skip")!);
+    const take = parseInt(response.headers.get("x-take")!);
+    const totalCount = parseInt(response.headers.get("x-total-count")!);
+
+    this.paginationInfo.skip = skip;
+    this.paginationInfo.take = take;
+    this.paginationInfo.totalItems = totalCount;
+
+    console.log(this.paginationInfo);
   }
 
   getPlaceholderEmptyRows(maxRows: number = 10): number[] {
