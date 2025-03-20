@@ -38,6 +38,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   protected paginationInfo: PaginationInfo = new PaginationInfo();
   readonly previousPage = -1;
   readonly nextPage = 1;
+  readonly paginationOptions: number[] = [5, 10, 25, 50, 100];
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
@@ -51,7 +52,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const request = new QueryRequest();
+    const request = new QueryRequest({take: 10});
     this._defineEnums();
     this._getPaginatedEntries(request);
     this._setupDateMaskListener();
@@ -122,6 +123,12 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this._navigateToPage(direction);
   }
 
+  onSelectPaginationOption(event: Event): void {
+    const selectedItem = (event.target as HTMLSelectElement).value;
+    this.paginationInfo.updateTake(parseInt(selectedItem));
+    this._getPaginatedEntries(new QueryRequest({take: this.paginationInfo.take}));
+  }
+
   isSelected(entryId: number): boolean {
     return this._selectedCheckboxes.includes(entryId);
   }
@@ -130,8 +137,8 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     return this._selectedCheckboxes.length === this.entriesList.length;
   }
 
-  getPlaceholderEmptyRows(maxRows: number = 10): number[] {
-    const  numberOfEmptyRows = Math.max(0, maxRows - this.entriesList.length);
+  getPlaceholderEmptyRows(): number[] {
+    const  numberOfEmptyRows = Math.max(0, this.paginationInfo.take - this.entriesList.length);
     return Array(numberOfEmptyRows).fill(0).map((_, index) => index);
   }
 
@@ -183,8 +190,8 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this.financialEntryService.addEntry(entry)
                               .subscribe({
                                 next: response => {
-                                  if (this.entriesList.length < 10) this.entriesList.push(response);
-                                  if (this.entriesList.length === 10) this.paginationInfo.totalItems += 1;
+                                  if (this.entriesList.length < this.paginationInfo.take) this.entriesList.push(response);
+                                  if (this.entriesList.length === this.paginationInfo.take) this.paginationInfo.totalItems += 1;
                                 },
                                 error: () => this.toast.showError("Ocorreu um erro ao criar a nova transação."),
                                 complete: () => this.toast.showSuccess("Transação criada com sucesso!")
@@ -287,7 +294,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
 
   private _movePagination(pageOffset: number): void {
     const newSkip = this.paginationInfo.skip + (this.paginationInfo.take * pageOffset);
-    const request = new QueryRequest({skip: newSkip});
+    const request = new QueryRequest({skip: newSkip, take: this.paginationInfo.take});
     this._getPaginatedEntries(request);
     
     const newPage = this.paginationInfo.currentPage + pageOffset;

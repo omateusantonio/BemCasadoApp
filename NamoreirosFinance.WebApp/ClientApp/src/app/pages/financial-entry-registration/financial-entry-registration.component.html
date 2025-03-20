@@ -91,13 +91,28 @@
 
 <div class="w-screen flex justify-center">
   <app-registration-content-box box-title-text="Entradas/saídas registradas" class="w-2/3">
-    <div class="p-8">
+    <div class="flex items-center gap-2 pl-8">
+      <p class="text-secondary-content">Exibir</p>
+      <select class="select w-25"  (change)="onSelectPaginationOption($event)">
+        @for (paginationOption of paginationOptions; track paginationOption) {
+          <option [selected]="paginationOption === paginationInfo.take" >
+            {{ paginationOption }}
+          </option>
+        }
+      </select>
+      <p class="text-secondary-content">registros</p>
+    </div>
+    <div class="pl-8 pb-8 pr-8 pt-2">
       <table class="table bg-primary-content">
         <thead>
           <tr>
             <th>
               <label>
-                <input type="checkbox" class="checkbox" (change)="onChangeAllCheckboxes($event)" [checked]="isEverythingSelected()" />
+                <input 
+                  type="checkbox" 
+                  class="checkbox" 
+                  (change)="onChangeAllCheckboxes($event)" 
+                  [checked]="isEverythingSelected()" />
               </label>
             </th>
             <th>Data</th>

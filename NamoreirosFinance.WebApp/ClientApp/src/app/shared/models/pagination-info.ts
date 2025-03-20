@@ -21,6 +21,11 @@ export class PaginationInfo {
         this._totalPages = totalPages > 0 ? totalPages : 1;
     }
 
+    updateTake(take: number): void {
+        this._take = take;
+        this.updateTotalPages();
+    }
+
     updatePaginationInfo(skip: number, take: number, totalItems: number): void {
         this._skip = skip;
         this._take = take;
