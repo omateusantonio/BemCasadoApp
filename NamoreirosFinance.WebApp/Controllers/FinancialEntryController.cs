@@ -30,7 +30,7 @@ namespace NamoreirosFinance.WebApp.Controllers
         }
 
         [HttpPost("search")]
-        public async Task<IActionResult> GetPaged([FromQuery] QueryRequest request)
+        public async Task<IActionResult> GetPaged([FromBody] QueryRequest request)
         {
             var entries = await _financialEntryService.GetPaged(request);
 

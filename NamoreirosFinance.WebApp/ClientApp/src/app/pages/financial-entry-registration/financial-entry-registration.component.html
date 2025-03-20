@@ -149,9 +149,9 @@
             <td colspan="6" class="py-2">
               <div class="flex justify-center">
                 <div class="join">
-                  <button class="join-item btn">«</button>
+                  <button class="join-item btn" (click)="onClickTableNavigation(previousPage)">«</button>
                   <button class="join-item btn w-32">Página {{paginationInfo.currentPage}} de {{paginationInfo.totalPages}}</button>
-                  <button class="join-item btn">»</button>
+                  <button class="join-item btn" (click)="onClickTableNavigation(nextPage)">»</button>
                 </div>
               </div>
             </td>

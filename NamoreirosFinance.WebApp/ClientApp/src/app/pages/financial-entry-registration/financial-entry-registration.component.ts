@@ -11,7 +11,6 @@ import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 import { BrazilianCurrencyToFloatPipe } from '../../shared/pipes/brazilian-currency-to-float.pipe';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from '../../shared/services/toast.service';
-import { firstValueFrom, Observable } from 'rxjs';
 import { QueryRequest } from '../../shared/models/query-request';
 import { HttpResponse } from '@angular/common/http';
 import { PaginationInfo } from '../../shared/models/pagination-info';
@@ -37,6 +36,8 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   confirmationDialogMessage: string = "";
   showSuccessAlert: boolean = false;
   protected paginationInfo: PaginationInfo = new PaginationInfo();
+  readonly previousPage = -1;
+  readonly nextPage = 1;
 
   constructor(private formBuilder: FormBuilder, 
     private financialEntryService: FinancialEntryService,
@@ -57,26 +58,11 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.financialEntryForm.valid) {
-      const newEntry = this._getValuesFromForm();
-      this._createNewEntry(newEntry);
-      this._resetForm();
-    } else {
-      this.financialEntryForm.markAllAsTouched();
-      this.toast.showWarning("Por favor, preencha todos os campos corretamente.");
-    }
+    this._handleSaveButtonClick();
   }
 
-  onSubmitUpdate(): void { // TODO: refactor this abomination of function
-    if (this.financialEntryForm.valid) {
-      const updatedEntry = this._getValuesFromForm();
-      this._updateEntry(updatedEntry);
-      this._resetForm();
-      this.isEditMode = false;
-    } else {
-      this.financialEntryForm.markAllAsTouched();
-      this.toast.showWarning("Por favor, preencha todos os campos corretamente.");
-    }
+  onSubmitUpdate(): void {
+    this._handleSaveButtonClick();
   }
   
   onChangeAllCheckboxes(event: any) {
@@ -113,7 +99,7 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   onClickDelete(entry: IFinancialEntry): void {
     this._entryToDeleteId = entry.id!;
     this.confirmationDialogMessage = `Tem certeza de que deseja excluir a transação "${entry.description}"?`;
-    this.isConfirmationDialogOpen = true;
+    this._openConfirmationDialog();
   }
 
   onConfirmDelete(): void {
@@ -123,8 +109,17 @@ export class FinancialEntryRegistrationComponent implements OnInit {
   }
   
   onCancelDelete(): void {
-    this.isConfirmationDialogOpen = false;
-    this._entryToDeleteId = null;
+    this._closeConfirmationDialog();
+  }
+
+  onClickNextPage(): void {
+    const request = new QueryRequest({skip: this.paginationInfo.skip + this.paginationInfo.take});
+    this._getPaginatedEntries(request);
+    this.paginationInfo.updateCurrentPage(this.paginationInfo.currentPage + 1);
+  }
+
+  onClickTableNavigation(direction: number): void {
+    this._navigateToPage(direction);
   }
 
   isSelected(entryId: number): boolean {
@@ -133,6 +128,11 @@ export class FinancialEntryRegistrationComponent implements OnInit {
 
   isEverythingSelected(): boolean {
     return this._selectedCheckboxes.length === this.entriesList.length;
+  }
+
+  getPlaceholderEmptyRows(maxRows: number = 10): number[] {
+    const  numberOfEmptyRows = Math.max(0, maxRows - this.entriesList.length);
+    return Array(numberOfEmptyRows).fill(0).map((_, index) => index);
   }
 
   private _createForm(): FormGroup {
@@ -163,16 +163,6 @@ export class FinancialEntryRegistrationComponent implements OnInit {
       value: this._formatFloatToBrazilianCurrency(entry.value),
       transactionDate: this._formatDateToBrazilianFormat(entry.transactionDate)
     };
-  }
-
-  private async _getAllEntries(): Promise<void> {
-    try {
-      const allEntries = await firstValueFrom(this.financialEntryService.getEntries());
-      this._setEntriesListData(allEntries);
-    } catch (error) {
-      this.toast.showError("Ocorreu um erro ao buscar as transações.");
-      this._setEntriesListData();
-    }
   }
 
   private _getPaginatedEntries(request: QueryRequest): void {
@@ -218,10 +208,9 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     this.financialEntryService.deleteEntry(this._entryToDeleteId!)
                               .subscribe({
                                 next: () => {
-                                  this.entriesList = this.entriesList.filter(entry => entry.id !== entryId);
-                                  this.isConfirmationDialogOpen = false;
-                                  this._entryToDeleteId = null;
-                                  if (this.entriesList.length < 10) this._getPaginatedEntries(new QueryRequest());
+                                  this._removeEntryFromList(entryId);
+                                  this._closeConfirmationDialog();
+                                  this._handlePagePositionAfterDelete();
                                 },
                                 error: () => this.toast.showError("Ocorreu um erro ao excluir a transação selecionada."),
                                 complete: () => this.toast.showSuccess("Transação excluída com sucesso!")
@@ -294,12 +283,76 @@ export class FinancialEntryRegistrationComponent implements OnInit {
     const totalCount = parseInt(response.headers.get("x-total-count")!);
 
     this.paginationInfo.updatePaginationInfo(skip, take, totalCount);
-
-    console.log(this.paginationInfo);
   }
 
-  getPlaceholderEmptyRows(maxRows: number = 10): number[] {
-    const  numberOfEmptyRows = Math.max(0, maxRows - this.entriesList.length);
-    return Array(numberOfEmptyRows).fill(0).map((_, index) => index);
+  private _movePagination(pageOffset: number): void {
+    const newSkip = this.paginationInfo.skip + (this.paginationInfo.take * pageOffset);
+    const request = new QueryRequest({skip: newSkip});
+    this._getPaginatedEntries(request);
+    
+    const newPage = this.paginationInfo.currentPage + pageOffset;
+    this.paginationInfo.updateCurrentPage(newPage);
+  }
+
+  private _removeEntryFromList(entryId: number): void {
+    this.entriesList = this.entriesList.filter(entry => entry.id !== entryId);
+  }
+
+  private _openConfirmationDialog(): void {
+    this.isConfirmationDialogOpen = true;
+  }
+
+  private _closeConfirmationDialog(): void {
+    this.isConfirmationDialogOpen = false;
+    this._entryToDeleteId = null;
+  }
+
+  private _handlePagePositionAfterDelete(): void {
+    const isTableEmpty = this.entriesList.length === 0;
+    const isNotFirstPage = this.paginationInfo.currentPage > 1;
+    const shouldNavigateToPreviousPage = isTableEmpty && isNotFirstPage;
+
+    const hasFewerItemThanPageSize = this.entriesList.length < this.paginationInfo.take;
+
+    if (shouldNavigateToPreviousPage) {
+      this._navigateToPage(this.previousPage);
+    } else if (hasFewerItemThanPageSize) {
+      this._reloadCurrentPage();
+    }
+  }
+  private _navigateToPage(pageOffset: number) {
+    const hasMoreItems = this.paginationInfo.skip + this.paginationInfo.take < this.paginationInfo.totalItems;
+    const hasPreviousPage = this.paginationInfo.skip > 0;
+
+    if (pageOffset === this.previousPage && !hasPreviousPage) return;
+    if (pageOffset === this.nextPage && !hasMoreItems) return;
+
+    this._movePagination(pageOffset);
+  }
+
+  private _reloadCurrentPage(): void {
+    const currentPageSkip = (this.paginationInfo.currentPage - 1) * this.paginationInfo.take;
+    const request = new QueryRequest({skip: currentPageSkip});
+    this._getPaginatedEntries(request);
+  }
+
+  private _handleSaveButtonClick(): void {
+    if (this.financialEntryForm.valid) {
+      const entry = this._getValuesFromForm();
+      this._saveOrUpdateEntry(entry);
+      this._resetForm();
+    } else {
+      this.financialEntryForm.markAllAsTouched();
+      this.toast.showWarning("Por favor, preencha todos os campos corretamente.");
+    }
+  }
+
+  private _saveOrUpdateEntry(entry: IFinancialEntry): void {
+    if (this.isEditMode) {
+      this._updateEntry(entry);
+      this.isEditMode = false;
+    }
+
+    this._createNewEntry(entry);
   }
 }
