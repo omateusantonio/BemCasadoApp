@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IFinancialEntry } from '../interfaces/financial-entry.interface';
+import { QueryRequest } from '../models/query-request';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FinancialEntryService {
-  private readonly apiUrl = "http://localhost:5214/api/FinancialEntry/v1";
+  private readonly apiUrl = "http://localhost:5214/api/v1/FinancialEntry";
 
   constructor(private http: HttpClient) { }
 
@@ -29,5 +30,9 @@ export class FinancialEntryService {
 
   deleteEntry(id: number): Observable<IFinancialEntry> {
     return this.http.delete<IFinancialEntry>(`${this.apiUrl}/${id}`);
+  }
+
+  getPaginatedEntries(request: QueryRequest): Observable<HttpResponse<IFinancialEntry[]>> {
+    return this.http.post<IFinancialEntry[]>(`${this.apiUrl}/search`, request, {observe: 'response'});
   }
 }

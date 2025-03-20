@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NamoreirosFinance.Domain.Core.Entities.Transaction;
+using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
 using NamoreirosFinance.Domain.Core.Enums;
 using NamoreirosFinance.Infrastructure.Repositories;
 

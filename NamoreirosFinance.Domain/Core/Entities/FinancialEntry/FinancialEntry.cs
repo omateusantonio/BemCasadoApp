@@ -1,8 +1,7 @@
-﻿using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
-using NamoreirosFinance.Domain.Core.Enums;
+﻿using NamoreirosFinance.Domain.Core.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace NamoreirosFinance.Domain.Core.Entities.Transaction
+namespace NamoreirosFinance.Domain.Core.Entities.FinancialEntry
 {
     [Table("financial_entry")]
     public class FinancialEntry : IFinancialEntry
