@@ -1,0 +1,185 @@
+<div class="w-screen flex justify-center">
+  <app-registration-content-box id="financialEntryFormContainerId" box-title-text="Cadastro de entrada/saída" class="w-2/3">
+      <form class="ps-8 pb-8 pe-8 w-full" [formGroup]="financialEntryForm">
+          <label class="form-control w-full pb-4">
+            <div class="label">
+              <span class="label-text text-secondary-content">Descrição:</span>
+            </div>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                  <path fill-rule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625ZM7.5 15a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 7.5 15Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H8.25Z" clip-rule="evenodd" />
+                  <path d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
+                </svg>
+              </span>
+              <input 
+                formControlName="description" 
+                type="text" 
+                class="input input-bordered w-full p-8 pl-10 bg-primary-content"
+                [ngClass]="{'input-error': financialEntryForm.get('description')?.invalid && financialEntryForm.get('description')?.touched}" />
+            </div>
+            <p 
+              *ngIf="financialEntryForm.get('description')?.invalid && financialEntryForm.get('description')?.touched" 
+              class="text-error text-sm mt-1">É obrigatório informar a descrição da transação</p> 
+          </label>
+          <label class="form-control w-full pb-4">
+              <div class="label">
+                <span class="label-text text-secondary-content">Valor:</span>
+              </div>
+              <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">R$</span>
+                  <input 
+                    formControlName="value" 
+                    type="text" 
+                    class="input input-bordered w-full p-8 pl-10 bg-primary-content"
+                    [ngClass]="{'input-error': financialEntryForm.get('value')?.invalid && financialEntryForm.get('value')?.touched}" />
+              </div>
+              <div *ngIf="financialEntryForm.get('value')?.invalid && financialEntryForm.get('value')?.touched" class="text-error text-sm mt-1">
+                <p *ngIf="financialEntryForm.get('value')?.errors?.['required']">É obrigatório informar o valor da transação</p>
+                <p *ngIf="financialEntryForm.get('value')?.errors?.['min']">O valor da transação deve ser maior do que zero</p>
+                <p *ngIf="financialEntryForm.get('value')?.errors?.['pattern']">O valor da transação deve estar no formato 0,00</p>
+              </div>
+          </label>
+          <label class="form-control w-full pb-4">
+            <div class="label">
+              <span class="label-text text-secondary-content">Data (dd/mm/aaaa):</span>
+            </div>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 448 512" fill="currentColor">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M128 0c17.7 0 32 14.3 32 32l0 32 128 0 0-32c0-17.7 14.3-32 32-32s32 14.3 32 32l0 32 48 0c26.5 0 48 21.5 48 48l0 48L0 160l0-48C0 85.5 21.5 64 48 64l48 0 0-32c0-17.7 14.3-32 32-32zM0 192l448 0 0 272c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 192zm64 80l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm128 0l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM64 400l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm112 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16z"/>
+                </svg>
+              </span>
+              <input 
+                formControlName="transactionDate" 
+                class="input input-bordered w-full p-8 pl-10 bg-primary-content"
+                [ngClass]="{'input-error': financialEntryForm.get('transactionDate')?.invalid && financialEntryForm.get('transactionDate')?.touched}" />
+            </div>
+            <p *ngIf="financialEntryForm.get('transactionDate')?.invalid && financialEntryForm.get('transactionDate')?.touched" class="text-error">É obrigatório informar a data </p>
+          </label>
+          <label class="form-control w-full pb-4">
+            <div class="label">
+              <span class="label-text text-secondary-content">Tipo:</span>
+            </div>
+            <div class="relative">
+              <select 
+                formControlName="type" 
+                class="select select-bordered w-full h-16 bg-primary-content">
+                <option *ngFor="let type of transactionTypes" [value]="type.value">
+                  {{type.label}}
+                </option>
+              </select>
+            </div>
+          </label>
+          @if (!isEditMode) {
+            <button class="btn w-full" type="submit" (click)="onSubmit()">
+              <span>Cadastrar transação</span>
+            </button>
+          } @else {
+            <div class="w-full flex justify-between gap-4">
+              <button class="btn flex-1" type="submit" (click)="onSubmitUpdate()">
+                <span>Atualizar transação</span>
+              </button>
+              <button class="btn btn-neutral w-[20%]" type="submit" (click)="onClickCancel()"> 
+                <span>Cancelar</span>
+              </button>
+            </div>
+          }
+        </form>
+  </app-registration-content-box>
+</div>
+
+<div class="w-screen flex justify-center">
+  <app-registration-content-box box-title-text="Entradas/saídas registradas" class="w-2/3">
+    <div class="flex items-center gap-2 pl-8">
+      <p class="text-secondary-content">Exibir</p>
+      <select class="select w-25"  (change)="onSelectPaginationOption($event)">
+        @for (paginationOption of paginationOptions; track paginationOption) {
+          <option [selected]="paginationOption === paginationInfo.take" >
+            {{ paginationOption }}
+          </option>
+        }
+      </select>
+      <p class="text-secondary-content">registros</p>
+    </div>
+    <div class="pl-8 pb-8 pr-8 pt-2">
+      <table class="table bg-primary-content">
+        <thead>
+          <tr>
+            <th>
+              <label>
+                <input 
+                  type="checkbox" 
+                  class="checkbox" 
+                  (change)="onChangeAllCheckboxes($event)" 
+                  [checked]="isEverythingSelected()" />
+              </label>
+            </th>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Tipo de transação</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of entriesList; let i=index">
+            <th>
+              <label>
+                <input type="checkbox" class="checkbox" [value]="entry.id" [checked]="isSelected(entry.id!)" (change)="onCheckboxChange(entry.id!)"/>
+              </label>
+            </th>
+            <td>{{ entry.transactionDate | date:'dd/MM/yyyy':'pt-BR' }}</td>
+            <td>{{ entry.description }}</td>
+            <td>{{ entry.value | currency:'BRL':'symbol':'1.2-2':'pt'}}</td>
+            <td [ngSwitch]="entry.type">
+              <div class="badge badge-success gap-2 justify-end" *ngSwitchCase="TransactionTypeEnum.Income">
+                Entrada
+              </div>
+              <div class="badge badge-error gap-2 justify-end" *ngSwitchCase="TransactionTypeEnum.Expense">
+                Saída
+              </div>
+            </td>
+            <td class="flex justify-center items-center">
+              <div>
+                <button class="pe-4" (click)="onClickUpdate(entry)">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 text-blue-500">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
+                  </svg>
+                </button>
+                <button (click)="onClickDelete(entry)">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 text-red-500">
+                    <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          @for (placeholderRow of getPlaceholderEmptyRows(); track placeholderRow) {
+            <tr class="h-12"></tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6" class="py-2">
+              <div class="flex justify-center">
+                <div class="join">
+                  <button class="join-item btn" (click)="onClickTableNavigation(previousPage)">«</button>
+                  <button class="join-item btn w-32">Página {{paginationInfo.currentPage}} de {{paginationInfo.totalPages}}</button>
+                  <button class="join-item btn" (click)="onClickTableNavigation(nextPage)">»</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </app-registration-content-box>
+</div>
+
+<app-confirmation-dialog
+  [isOpen]="isConfirmationDialogOpen"
+  [message]="confirmationDialogMessage"
+  (confirm)="onConfirmDelete()"
+  (cancel)="onCancelDelete()"
+></app-confirmation-dialog>

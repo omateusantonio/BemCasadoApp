@@ -1,6 +1,8 @@
-﻿using NamoreirosFinance.Application.Interfaces;
-using NamoreirosFinance.Domain.Core.Entities.Transaction;
-using NamoreirosFinance.Domain.Core.Repositories;
+﻿using NamoreirosFinance.Application.Common.Request;
+using NamoreirosFinance.Application.Interfaces;
+using NamoreirosFinance.Domain.Core.Entities.FinancialEntry;
+using NamoreirosFinance.Domain.Core.Interfaces.Repositories;
+using NamoreirosFinance.Domain.Core.Models;
 
 namespace NamoreirosFinance.Application.Services
 {
@@ -37,7 +39,13 @@ namespace NamoreirosFinance.Application.Services
 
         public async Task Update(FinancialEntry financialEntry)
         {
-            _repository.Update(financialEntry);
+            await _repository.Update(financialEntry);
+        }
+
+        public async Task<PagedResult<FinancialEntry>> GetPaged(QueryRequest request)
+        {
+            var entries = await _repository.GetPaged(request);
+            return entries;
         }
     }
 }
